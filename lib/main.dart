@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pig_counter/routes/root.dart';
+import 'package:pig_counter/stores/init.dart';
 
-void main() {
-  // runApp();
+Future main() async {
+  await initStore();
+  runApp(getRootWidget());
 }
