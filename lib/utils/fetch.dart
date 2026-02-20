@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:pig_counter/constants/http.dart';
-import 'package:pig_counter/models/response.dart';
+import 'package:pig_counter/models/api/response.dart';
 
 import '../stores/token.dart';
 

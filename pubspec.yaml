@@ -13,6 +13,8 @@ dependencies:
   dio: ^5.9.1
   shared_preferences: ^2.5.4
   flutter_launcher_icons: ^0.14.4
+  flutter_lucide: ^1.8.2
+  oktoast: ^3.4.0
 
 dev_dependencies:
   flutter_test:
@@ -23,8 +25,7 @@ flutter:
   uses-material-design: true
   assets:
     - lib/assets/
-    - lib/assets/images/tabs/
-    - lib/assets/icons/
+    - lib/assets/images/
     - lib/assets/fonts/HarmonyOS_Sans_SC/
   fonts:
     - family: HarmonyOS_Sans_SC

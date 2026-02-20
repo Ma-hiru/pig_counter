@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pig_counter/constants/color.dart';
+import 'package:pig_counter/constants/font.dart';
 import 'package:pig_counter/constants/ui.dart';
 
 BottomNavigationBar getHomeTabBar({
@@ -6,20 +8,23 @@ BottomNavigationBar getHomeTabBar({
   Function(int)? onTap,
 }) {
   return BottomNavigationBar(
+    type: .fixed,
+    enableFeedback: false,
+    selectedItemColor: ColorConstants.themeColor,
+    selectedFontSize: FontConstants.fontSize.md,
+    unselectedItemColor: Colors.black,
+    unselectedFontSize: FontConstants.fontSize.md,
+    showUnselectedLabels: true,
+    currentIndex: currentIndex,
+    onTap: onTap,
     items: UIConstants.tabList
         .map(
           (tabData) => BottomNavigationBarItem(
-            icon: Image.asset(tabData.icon, width: 25, height: 25),
-            activeIcon: Image.asset(tabData.activeIcon, width: 25, height: 25),
+            icon: tabData.icon,
+            activeIcon: tabData.activeIcon,
             label: tabData.label,
           ),
         )
         .toList(),
-    enableFeedback: false,
-    selectedItemColor: Colors.black,
-    unselectedItemColor: Colors.black,
-    showUnselectedLabels: true,
-    currentIndex: currentIndex,
-    onTap: onTap,
   );
 }

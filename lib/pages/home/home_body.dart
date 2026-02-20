@@ -6,6 +6,6 @@ import 'package:pig_counter/pages/home/task/task_view.dart';
 Widget getHomeBody({required int currentIndex}) {
   return IndexedStack(
     index: currentIndex,
-    children: [TaskView(), StatsView(), DashboardView()],
+    children: const [TaskView(), StatsView(), DashboardView()],
   );
 }

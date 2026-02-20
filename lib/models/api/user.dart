@@ -31,4 +31,16 @@ class UserProfile {
       admin: json["admin"] ?? false,
     );
   }
+
+  factory UserProfile.empty() {
+    return const UserProfile(
+      id: "",
+      username: "",
+      name: "",
+      profilePicture: "",
+      token: "",
+      organization: "",
+      admin: false,
+    );
+  }
 }

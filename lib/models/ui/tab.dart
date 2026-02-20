@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
+
 class TabItem {
-  final String icon;
-  final String activeIcon;
+  final Icon icon;
+  final Icon activeIcon;
   final String label;
 
   const TabItem({
