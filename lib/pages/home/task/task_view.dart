@@ -10,6 +10,18 @@ class TaskView extends StatefulWidget {
 class _TaskViewState extends State<TaskView> {
   @override
   Widget build(BuildContext context) {
-    return Container(alignment: .center, child: Text("TaskView"));
+    return Container(
+      alignment: .center,
+      child: ListView(
+        children: List.generate(
+          100,
+          (index) => Container(
+            height: 50,
+            alignment: Alignment.center,
+            child: Text("Task $index"),
+          ),
+        ),
+      ),
+    );
   }
 }
