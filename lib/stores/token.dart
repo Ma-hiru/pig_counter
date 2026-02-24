@@ -1,18 +1,18 @@
 import 'package:pig_counter/constants/http.dart';
+import 'package:pig_counter/stores/local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _TokenManager {
   String? _token;
+  static const String _tokenStoreKey = "auth_token";
 
-  Future init() async {
-    final prefs = await SharedPreferences.getInstance();
-    _token = prefs.getString(HTTPConstants.tokenKey);
+  _TokenManager() {
+    _token = LocalStore.getItem(_TokenManager._tokenStoreKey).maybeString;
   }
 
   Future setToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString(HTTPConstants.tokenKey, token);
     _token = token;
+    await LocalStore.setItem(_TokenManager._tokenStoreKey, token);
   }
 
   String? getToken() {
@@ -24,9 +24,8 @@ class _TokenManager {
   }
 
   Future removeToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.remove(HTTPConstants.tokenKey);
     _token = null;
+    await LocalStore.removeItem(_TokenManager._tokenStoreKey);
   }
 }
 

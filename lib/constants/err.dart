@@ -2,6 +2,12 @@ class ErrConstants {
   static const FormatException responseFormatError = FormatException(
     "Invalid Response Json format",
   );
+  static const FormatException typeConvertError = FormatException(
+    "Type convert error",
+  );
+  static const FormatException localStoreNotInit = FormatException(
+    "LocalStore no init",
+  );
 }
 
 class ErrMsgConstants {

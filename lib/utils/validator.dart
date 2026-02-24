@@ -1,9 +1,9 @@
 class Validator {
-  static String? usernameValidator(String? value) {
+  static String? username(String? value) {
     return null;
   }
 
-  static String? passwordValidator(String? value) {
+  static String? password(String? value) {
     return null;
   }
 }

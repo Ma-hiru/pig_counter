@@ -5,26 +5,28 @@ import '../../constants/font.dart';
 import '../../constants/ui.dart';
 
 class AppButton {
-  static Widget blockButton({
+  static Widget normal({
     required String label,
     bool disabled = false,
     bool filled = false,
+    bool blocked = true,
     Function()? onPressed,
   }) {
-    final themeColor = disabled
-        ? ColorConstants.themeColor.withAlpha(100)
-        : ColorConstants.themeColor;
+    final buttonColor = ButtonColor(disabled: disabled, filled: filled);
     return SizedBox(
-      width: double.infinity,
+      width: blocked ? double.infinity : null,
       child: OutlinedButton(
         onPressed: () {
           if (!disabled) onPressed?.call();
         },
         style: OutlinedButton.styleFrom(
-          backgroundColor: filled ? themeColor : Colors.transparent,
-          overlayColor: ColorConstants.themeColor.withAlpha(30),
+          backgroundColor: buttonColor.backgroundColor,
+          overlayColor: buttonColor.overlayColor,
           padding: .symmetric(vertical: UIConstants.gapSize.md),
-          side: BorderSide(color: ColorConstants.themeColor, width: 1.5),
+          side: BorderSide(
+            color: buttonColor.themeColor,
+            width: UIConstants.gapSize.xs,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: .circular(UIConstants.borderRadius),
           ),
@@ -34,10 +36,66 @@ class AppButton {
           style: TextStyle(
             fontSize: FontConstants.fontSize.md,
             fontFamily: FontConstants.fontFamily,
-            color: filled ? Colors.white : themeColor,
+            color: buttonColor.textColor,
           ),
         ),
       ),
     );
   }
+
+  static Widget text({
+    required String label,
+    bool disabled = false,
+    Function()? onPressed,
+    Color? color,
+  }) {
+    final buttonColor = ButtonColor(disabled: disabled, filled: false);
+    return OutlinedButton(
+      onPressed: () {
+        if (!disabled) onPressed?.call();
+      },
+      style: OutlinedButton.styleFrom(
+        backgroundColor: buttonColor.backgroundColor,
+        overlayColor: buttonColor.overlayColor,
+        padding: .symmetric(vertical: UIConstants.gapSize.md),
+        side: .none,
+        shape: RoundedRectangleBorder(
+          borderRadius: .circular(UIConstants.borderRadius),
+        ),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: FontConstants.fontSize.md,
+          fontFamily: FontConstants.fontFamily,
+          color: buttonColor.textColor,
+        ),
+      ),
+    );
+  }
+}
+
+class ButtonColor {
+  bool disabled;
+  bool filled;
+
+  ButtonColor({required this.disabled, required this.filled});
+
+  Color get themeColor => disabled
+      ? ColorConstants.themeColor.withAlpha(150)
+      : ColorConstants.themeColor;
+
+  Color get overlayColor => disabled
+      ? Colors.transparent
+      : filled
+      ? ColorConstants.textColorOnTheme.withAlpha(150)
+      : themeColor.withAlpha(150);
+
+  Color get textColor {
+    var textColor = filled ? ColorConstants.textColorOnTheme : themeColor;
+    if (disabled) return textColor.withAlpha(150);
+    return textColor;
+  }
+
+  Color get backgroundColor => filled ? themeColor : Colors.transparent;
 }

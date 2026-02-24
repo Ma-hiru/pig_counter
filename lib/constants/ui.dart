@@ -37,9 +37,9 @@ class UIConstants {
     sm: 10,
     md: 16,
     lg: 22,
-    xl: 28,
-    xxl: 36,
-    xxxl: 44,
+    xl: 32,
+    xxl: 42,
+    xxxl: 52,
   );
   static const SizeEnum gapSize = SizeEnum(
     xs: 2,

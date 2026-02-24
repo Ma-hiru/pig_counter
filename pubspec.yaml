@@ -27,7 +27,13 @@ flutter:
     - lib/assets/
     - lib/assets/images/
     - lib/assets/fonts/HarmonyOS_Sans_SC/
+    - lib/assets/fonts/logo/
   fonts:
+    - family: logo_font
+      fonts:
+        - asset: lib/assets/fonts/logo/logo_font.ttf
+          weight: 400
+          style: normal
     - family: HarmonyOS_Sans_SC
       fonts:
         - asset: lib/assets/fonts/HarmonyOS_Sans_SC/HarmonyOS_Sans_SC_Thin.ttf

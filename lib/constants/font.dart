@@ -1,7 +1,8 @@
 import '../models/ui/size.dart';
 
 class FontConstants {
-  static const String fontFamily = 'HarmonyOS_Sans_SC';
+  static const String fontFamily = "HarmonyOS_Sans_SC";
+  static const String logoFontFamily = "logo_font";
   static const SizeEnum fontSize = SizeEnum(
     xs: 8.0,
     sm: 14.0,

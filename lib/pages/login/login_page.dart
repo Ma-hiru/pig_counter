@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pig_counter/constants/ui.dart';
+import 'package:pig_counter/widgets/button/button.dart';
 
 import 'login_actions.dart';
 import 'login_form.dart';
+import 'login_logo.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,6 +14,21 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  Widget back() {
+    return Expanded(
+      child: Container(
+        alignment: .bottomCenter,
+        padding: .only(bottom: UIConstants.gapSize.xl),
+        child: AppButton.text(
+          label: "取消",
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,8 +42,13 @@ class _LoginPageState extends State<LoginPage> {
           ),
           SafeArea(
             child: Column(
-              mainAxisAlignment: .center,
-              children: const [LoginForm(), LoginActions()],
+              mainAxisAlignment: .start,
+              children: [
+                const LoginLogo(),
+                const LoginForm(),
+                const LoginActions(),
+                back(),
+              ],
             ),
           ),
         ],

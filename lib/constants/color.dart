@@ -2,6 +2,7 @@ import 'dart:ui';
 
 class ColorConstants {
   static const Color themeColor = Color(0xFF2b5876);
+  static const Color textColorOnTheme = Color(0xFFFFFFFF);
   static const Color successColor = Color(0xFF4CAF50);
   static const Color errorColor = Color(0xFFF44336);
   static const Color backgroundColor = Color(0xFFF5F5F5);
