@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pig_counter/constants/app.dart';
 import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/font.dart';
-import 'package:pig_counter/constants/ui.dart';
 
 class LoginLogo extends StatefulWidget {
   const LoginLogo({super.key});

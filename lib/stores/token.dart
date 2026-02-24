@@ -1,6 +1,4 @@
-import 'package:pig_counter/constants/http.dart';
 import 'package:pig_counter/stores/local.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class _TokenManager {
   String? _token;

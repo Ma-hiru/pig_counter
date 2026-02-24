@@ -90,10 +90,11 @@ class _Request {
 
   Future<ResponseData<T>> post<T>(
     String path,
-    T Function(dynamic data) handleData, {
-    Map<String, dynamic>? data,
+    T Function(dynamic data)? handleData, {
+    Object? data,
     Options? options,
   }) {
+    handleData ??= (v) => v;
     return _handleResponse<T>(
       _dio.post(path, data: data, options: options),
       handleData,

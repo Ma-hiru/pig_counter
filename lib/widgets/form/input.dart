@@ -12,6 +12,7 @@ class FormInput extends StatefulWidget {
   final String? Function(String?)? validator;
   final void Function(String value)? onChanged;
   final void Function()? onSuffixTap;
+  final void Function()? onFocus;
   final Widget? suffix;
   final Icon? prefixIcon;
 
@@ -22,6 +23,7 @@ class FormInput extends StatefulWidget {
     this.obscureText = false,
     this.validator,
     this.onChanged,
+    this.onFocus,
     this.onSuffixTap,
     this.suffix,
     this.prefixIcon,
@@ -39,6 +41,10 @@ class _FormInputState extends State<FormInput> {
   void updateClearIconVisibility() {
     _showClearIcon = _focusNode.hasFocus && widget.controller.text.isNotEmpty;
     if (!_focusNode.hasFocus) _lastBlurTime = DateTime.now();
+    if (widget.onFocus != null && _focusNode.hasFocus) {
+      _focusNode.unfocus();
+      widget.onFocus!();
+    }
     setState(() {});
   }
 

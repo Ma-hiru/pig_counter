@@ -15,6 +15,7 @@ dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_lucide: ^1.8.2
   oktoast: ^3.4.0
+  image_picker: ^1.2.1
 
 dev_dependencies:
   flutter_test:

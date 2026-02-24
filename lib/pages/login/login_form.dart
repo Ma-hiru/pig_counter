@@ -50,6 +50,7 @@ class _LoginFormState extends State<LoginForm> {
       prefixIcon: Icon(
         LucideIcons.user_round,
         color: ColorConstants.themeColor,
+        size: UIConstants.uiSize.md,
       ),
       controller: _usernameController,
     );
@@ -62,7 +63,11 @@ class _LoginFormState extends State<LoginForm> {
     return FormInput(
       hitText: "请输入密码",
       validator: Validator.password,
-      prefixIcon: Icon(LucideIcons.lock, color: ColorConstants.themeColor),
+      prefixIcon: Icon(
+        LucideIcons.lock,
+        size: UIConstants.uiSize.md,
+        color: ColorConstants.themeColor,
+      ),
       obscureText: obscure,
       controller: _passwordController,
       onSuffixTap: onObscureChanged,
@@ -155,6 +160,7 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       child: Container(
         padding: const .symmetric(
           horizontal: UIConstants.contentPaddingFromSides,
