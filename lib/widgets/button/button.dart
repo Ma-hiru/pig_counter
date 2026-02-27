@@ -10,19 +10,23 @@ class AppButton {
     bool disabled = false,
     bool filled = false,
     bool blocked = true,
+    bool loading = false,
     Function()? onPressed,
   }) {
-    final buttonColor = ButtonColor(disabled: disabled, filled: filled);
+    final buttonColor = ButtonColor(
+      disabled: disabled || loading,
+      filled: filled,
+    );
     return SizedBox(
       width: blocked ? double.infinity : null,
       child: OutlinedButton(
         onPressed: () {
-          if (!disabled) onPressed?.call();
+          if (!disabled && !loading) onPressed?.call();
         },
         style: OutlinedButton.styleFrom(
           backgroundColor: buttonColor.backgroundColor,
           overlayColor: buttonColor.overlayColor,
-          padding: .symmetric(vertical: UIConstants.gapSize.md),
+          padding: .symmetric(vertical: UIConstants.gapSize.lg),
           side: BorderSide(
             color: buttonColor.themeColor,
             width: UIConstants.gapSize.xs,
@@ -31,14 +35,37 @@ class AppButton {
             borderRadius: .circular(UIConstants.borderRadius),
           ),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: FontConstants.fontSize.md,
-            fontFamily: FontConstants.fontFamily,
-            color: buttonColor.textColor,
-          ),
-        ),
+        child: loading
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: buttonColor.textColor,
+                    ),
+                  ),
+                  SizedBox(width: UIConstants.gapSize.md),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: FontConstants.fontSize.md,
+                      fontFamily: FontConstants.fontFamily,
+                      color: buttonColor.textColor,
+                    ),
+                  ),
+                ],
+              )
+            : Text(
+                label,
+                style: TextStyle(
+                  fontSize: FontConstants.fontSize.md,
+                  fontFamily: FontConstants.fontFamily,
+                  color: buttonColor.textColor,
+                ),
+              ),
       ),
     );
   }
@@ -57,7 +84,7 @@ class AppButton {
       style: OutlinedButton.styleFrom(
         backgroundColor: buttonColor.backgroundColor,
         overlayColor: buttonColor.overlayColor,
-        padding: .symmetric(vertical: UIConstants.gapSize.md),
+        padding: .symmetric(vertical: UIConstants.gapSize.lg),
         side: .none,
         shape: RoundedRectangleBorder(
           borderRadius: .circular(UIConstants.borderRadius),

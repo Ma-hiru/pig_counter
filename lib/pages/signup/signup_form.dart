@@ -9,7 +9,7 @@ import '../../constants/font.dart';
 import '../../constants/ui.dart';
 import '../../utils/validator.dart';
 import '../../widgets/button/button.dart';
-import '../../widgets/form/input.dart';
+import '../../widgets/form/outline_input.dart';
 
 class SignupForm extends StatefulWidget {
   const SignupForm({super.key});
@@ -31,7 +31,7 @@ class SignupFormState extends State<SignupForm> {
   bool passwordAgainObscure = true;
 
   Widget buildUsernameField() {
-    return FormInput(
+    return OutlineFormInput(
       hitText: "请输入用户名",
       validator: Validator.username,
       prefixIcon: Icon(
@@ -47,7 +47,7 @@ class SignupFormState extends State<SignupForm> {
     required bool obscure,
     required Function()? onObscureChanged,
   }) {
-    return FormInput(
+    return OutlineFormInput(
       hitText: "请输入密码",
       validator: Validator.password,
       prefixIcon: Icon(
@@ -55,18 +55,8 @@ class SignupFormState extends State<SignupForm> {
         color: ColorConstants.themeColor,
         size: UIConstants.uiSize.md,
       ),
-      obscureText: obscure,
+      showObscureToggle: true,
       controller: passwordController,
-      onSuffixTap: onObscureChanged,
-      suffix: obscure
-          ? Transform.scale(
-              scale: 1.12,
-              child: Icon(LucideIcons.eye_off, size: FontConstants.fontSize.md),
-            )
-          : Transform.scale(
-              scale: 1.12,
-              child: Icon(LucideIcons.eye, size: FontConstants.fontSize.md),
-            ),
     );
   }
 
@@ -74,31 +64,25 @@ class SignupFormState extends State<SignupForm> {
     required bool obscure,
     required Function()? onObscureChanged,
   }) {
-    return FormInput(
+    return OutlineFormInput(
       hitText: "请再次输入密码",
-      validator: Validator.password,
+      validator: (value) {
+        if (value == null || value.isEmpty) return "请再次输入密码";
+        if (value != passwordController.text) return "两次输入的密码不一致";
+        return null;
+      },
       prefixIcon: Icon(
         LucideIcons.lock,
         color: ColorConstants.themeColor,
         size: UIConstants.uiSize.md,
       ),
-      obscureText: obscure,
+      showObscureToggle: true,
       controller: passwordAgainController,
-      onSuffixTap: onObscureChanged,
-      suffix: obscure
-          ? Transform.scale(
-              scale: 1.12,
-              child: Icon(LucideIcons.eye_off, size: FontConstants.fontSize.md),
-            )
-          : Transform.scale(
-              scale: 1.12,
-              child: Icon(LucideIcons.eye, size: FontConstants.fontSize.md),
-            ),
     );
   }
 
   Widget buildNameField() {
-    return FormInput(
+    return OutlineFormInput(
       hitText: "请输入姓名",
       validator: Validator.username,
       prefixIcon: Icon(
@@ -175,7 +159,7 @@ class SignupFormState extends State<SignupForm> {
   }
 
   Widget buildCompanyField() {
-    return FormInput(
+    return OutlineFormInput(
       hitText: "选择公司",
       validator: Validator.username,
       prefixIcon: Icon(

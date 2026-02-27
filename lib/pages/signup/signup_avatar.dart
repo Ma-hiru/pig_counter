@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pig_counter/constants/app.dart';
 import 'package:pig_counter/constants/err.dart';
+import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/utils/toast.dart';
 
@@ -55,17 +56,38 @@ class _SignupAvatarState extends State<SignupAvatar> {
         ),
         child: GestureDetector(
           onTap: selectAvatar,
-          child: CircleAvatar(
-            radius: UIConstants.uiSize.xl,
-            backgroundColor: Colors.grey.shade200,
-            backgroundImage: source != null ? FileImage(source!) : null,
-            child: source == null
-                ? Icon(
-                    Icons.person,
-                    size: UIConstants.uiSize.xxl,
-                    color: Colors.grey.shade400,
-                  )
-                : null,
+          child: Stack(
+            children: [
+              CircleAvatar(
+                radius: UIConstants.uiSize.xl,
+                backgroundColor: Colors.grey.shade200,
+                backgroundImage: source != null ? FileImage(source!) : null,
+                child: source == null
+                    ? Icon(
+                        Icons.person,
+                        size: UIConstants.uiSize.xxl,
+                        color: Colors.grey.shade400,
+                      )
+                    : null,
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: ColorConstants.themeColor,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 2),
+                  ),
+                  child: const Icon(
+                    Icons.camera_alt,
+                    size: 12,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
