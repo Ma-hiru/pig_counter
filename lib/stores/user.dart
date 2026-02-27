@@ -34,4 +34,8 @@ class UserController extends GetxController {
   String? getMemoPassword() {
     return LocalStore.getItem(UserController._memoPwdKey).maybeString;
   }
+
+  bool isLoggedIn() {
+    return profile.value.token.isNotEmpty;
+  }
 }

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pig_counter/api/login.dart';
+import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/pages/signup/signup_form.dart';
 import 'package:pig_counter/utils/toast.dart';
 
 import '../../constants/err.dart';
 import '../../constants/ui.dart';
-import '../../utils/app_bar.dart';
 import '../../widgets/button/button.dart';
+import '../../widgets/header/navigator_app_bar.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -91,21 +92,20 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: appTopBar("注册"),
-        body: Padding(
-          padding: const .symmetric(
-            horizontal: UIConstants.contentPaddingFromSides,
-          ),
-          child: Column(
-            mainAxisAlignment: .start,
-            children: [
-              SignupForm(key: signupFormKey),
-              Expanded(flex: 1, child: buildButton()),
-              SizedBox(height: UIConstants.gapSize.xl),
-            ],
-          ),
+    return Scaffold(
+      appBar: NavigatorAppbar(title: "注册"),
+      body: Container(
+        color: ColorConstants.backgroundColor,
+        padding: const .symmetric(
+          horizontal: UIConstants.contentPaddingFromSides,
+        ),
+        child: Column(
+          mainAxisAlignment: .start,
+          children: [
+            SignupForm(key: signupFormKey),
+            Expanded(flex: 1, child: buildButton()),
+            SizedBox(height: UIConstants.gapSize.xl),
+          ],
         ),
       ),
     );

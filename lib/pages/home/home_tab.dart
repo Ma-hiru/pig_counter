@@ -9,6 +9,7 @@ BottomNavigationBar getHomeTabBar({
 }) {
   return BottomNavigationBar(
     type: .fixed,
+    backgroundColor: Colors.white,
     enableFeedback: false,
     selectedItemColor: ColorConstants.themeColor,
     selectedFontSize: FontConstants.fontSize.md,
