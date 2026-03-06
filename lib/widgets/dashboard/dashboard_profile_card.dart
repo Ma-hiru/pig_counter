@@ -4,19 +4,17 @@ import 'package:pig_counter/constants/font.dart';
 import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/models/api/user.dart';
 
-/// 沉浸式头部卡片，无圆角、无外边距，自适应状态栏高度。
-/// 未登录（token 为空）时显示引导登录区域。
+import '../../constants/routes.dart';
+
 class DashboardProfileCard extends StatelessWidget {
   final UserProfile profile;
-  final VoidCallback? onLoginTap;
+  final bool isLoggedIn;
 
   const DashboardProfileCard({
     super.key,
     required this.profile,
-    this.onLoginTap,
+    required this.isLoggedIn,
   });
-
-  bool get _isLoggedIn => profile.token.isNotEmpty;
 
   String get _greeting {
     final hour = DateTime.now().hour;
@@ -41,28 +39,32 @@ class DashboardProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
-
     return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
+      width: .infinity,
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [ColorConstants.themeColor, Color(0xFF4A8DA8)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          colors: [
+            ColorConstants.themeColor,
+            ColorConstants.themeColor.withAlpha(200),
+          ],
+          begin: .topLeft,
+          end: .bottomRight,
         ),
       ),
-      padding: EdgeInsets.fromLTRB(
+      padding: .fromLTRB(
         UIConstants.contentPaddingFromSides,
         topPadding + UIConstants.gapSize.xl,
         UIConstants.contentPaddingFromSides,
         UIConstants.gapSize.xxxl,
       ),
-      child: _isLoggedIn ? _LoggedInContent(
-        avatarText: _avatarText,
-        greeting: _greeting,
-        displayName: _displayName,
-        profile: profile,
-      ) : _GuestContent(onLoginTap: onLoginTap),
+      child: isLoggedIn
+          ? _LoggedInContent(
+              avatarText: _avatarText,
+              greeting: _greeting,
+              displayName: _displayName,
+              profile: profile,
+            )
+          : _GuestContent(),
     );
   }
 }
@@ -135,12 +137,7 @@ class _LoggedInContent extends StatelessWidget {
   }
 }
 
-// ── 未登录内容 ────────────────────────────────────────────────
 class _GuestContent extends StatelessWidget {
-  final VoidCallback? onLoginTap;
-
-  const _GuestContent({this.onLoginTap});
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -186,7 +183,7 @@ class _GuestContent extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onTap: onLoginTap,
+          onTap: () => Navigator.pushNamed(context, RoutesPathConstants.login),
           child: Container(
             padding: EdgeInsets.symmetric(
               horizontal: UIConstants.gapSize.lg,
@@ -236,4 +233,3 @@ class _Badge extends StatelessWidget {
     );
   }
 }
-

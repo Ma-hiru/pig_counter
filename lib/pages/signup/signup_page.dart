@@ -5,6 +5,7 @@ import 'package:pig_counter/pages/signup/signup_form.dart';
 import 'package:pig_counter/utils/toast.dart';
 
 import '../../constants/err.dart';
+import '../../constants/routes.dart';
 import '../../constants/ui.dart';
 import '../../widgets/button/button.dart';
 import '../../widgets/header/navigator_app_bar.dart';
@@ -60,7 +61,7 @@ class _SignupPageState extends State<SignupPage> {
       }
 
       if (mounted) {
-        Navigator.pushNamed(context, "/login");
+        Navigator.pushNamed(context, RoutesPathConstants.login);
         Toast.showToast(.success("注册成功，请登录"));
       }
     } catch (err) {

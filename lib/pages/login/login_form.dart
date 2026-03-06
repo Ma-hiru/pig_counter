@@ -9,6 +9,7 @@ import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/stores/user.dart';
 import 'package:pig_counter/utils/toast.dart';
 
+import '../../constants/routes.dart';
 import '../../utils/validator.dart';
 import '../../widgets/button/button.dart';
 import '../../widgets/form/input.dart';
@@ -143,7 +144,7 @@ class _LoginFormState extends State<LoginForm> {
 
       _userController.updateUserProfile(userProfile.data);
       if (mounted) {
-        Navigator.pushNamed(context, "/home");
+        Navigator.pushNamed(context, RoutesPathConstants.home);
         Toast.showToast(.success("登录成功"));
       }
     } catch (err) {
@@ -186,7 +187,8 @@ class _LoginFormState extends State<LoginForm> {
             SizedBox(height: UIConstants.gapSize.md),
             AppButton.normal(
               label: "注册",
-              onPressed: () => Navigator.pushNamed(context, "/signup"),
+              onPressed: () =>
+                  Navigator.pushNamed(context, RoutesPathConstants.signup),
             ),
           ],
         ),

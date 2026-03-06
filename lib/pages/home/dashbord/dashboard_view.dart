@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:get/get.dart';
 import 'package:pig_counter/constants/color.dart';
+import 'package:pig_counter/constants/routes.dart';
 import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/models/api/user.dart';
 import 'package:pig_counter/stores/user.dart';
@@ -34,7 +35,7 @@ class _DashboardViewState extends State<DashboardView> {
             onPressed: () {
               Navigator.pop(ctx);
               _userController.updateUserProfile(UserProfile.empty());
-              Navigator.pushNamed(context, "/login");
+              Navigator.pushNamed(context, RoutesPathConstants.login);
             },
             child: const Text(
               "退出",
@@ -49,28 +50,24 @@ class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
+      value: .light,
       child: CustomScrollView(
         slivers: [
-          // 沉浸式头像区（无 AppBar，自带 status bar padding）
           SliverToBoxAdapter(
             child: Obx(
               () => DashboardProfileCard(
                 profile: _userController.profile.value,
-                onLoginTap: () => Navigator.pushNamed(context, "/login"),
+                isLoggedIn: _userController.isLoggedIn(),
               ),
             ),
           ),
-
           SliverToBoxAdapter(child: SizedBox(height: UIConstants.gapSize.xl)),
-
           SliverPadding(
-            padding: EdgeInsets.symmetric(
+            padding: const .symmetric(
               horizontal: UIConstants.contentPaddingFromSides,
             ),
             sliver: SliverList.list(
               children: [
-                // ── 账户 ──────────────────────────────────
                 DashboardMenuSection(
                   title: "账户",
                   items: [
@@ -90,7 +87,6 @@ class _DashboardViewState extends State<DashboardView> {
                   ],
                 ),
                 SizedBox(height: UIConstants.gapSize.xl),
-                // ── 功能 ──────────────────────────────────
                 DashboardMenuSection(
                   title: "功能",
                   items: [
@@ -111,7 +107,6 @@ class _DashboardViewState extends State<DashboardView> {
                   ],
                 ),
                 SizedBox(height: UIConstants.gapSize.xl),
-                // ── 系统 ──────────────────────────────────
                 DashboardMenuSection(
                   title: "系统",
                   items: [
@@ -120,7 +115,10 @@ class _DashboardViewState extends State<DashboardView> {
                       iconColor: Colors.grey.shade600,
                       label: "设置",
                       onTap: () {
-                        Navigator.pushNamed(context, "/settings");
+                        Navigator.pushNamed(
+                          context,
+                          RoutesPathConstants.settings,
+                        );
                       },
                     ),
                     DashboardMenuItem(

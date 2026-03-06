@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/font.dart';
@@ -16,17 +18,17 @@ class DashboardMenuSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         Padding(
-          padding: EdgeInsets.only(
+          padding: .only(
             left: UIConstants.gapSize.sm,
             bottom: UIConstants.gapSize.md,
           ),
           child: Text(
             title,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: FontConstants.fontSize.xs,
               fontWeight: FontWeight.w600,
               color: ColorConstants.secondaryTextColor,
               letterSpacing: 0.5,
@@ -36,20 +38,29 @@ class DashboardMenuSection extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(UIConstants.borderRadius),
-            border: Border.all(color: Colors.grey.shade200),
+            borderRadius: .circular(UIConstants.borderRadius),
+            border: .all(color: Colors.grey.shade200),
           ),
           clipBehavior: Clip.antiAlias,
           child: Column(
             children: items.indexed.map((entry) {
-              final i = entry.$1;
+              final index = entry.$1;
               final item = entry.$2;
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _MenuTile(item: item),
-                  if (i < items.length - 1)
-                    Divider(height: 1, indent: 44, color: Colors.grey.shade100),
+                  if (index < items.length - 1)
+                    Divider(
+                      height: 1,
+                      indent:
+                          UIConstants.gapSize.xl + // _MenuTile left padding
+                          UIConstants
+                              .gapSize
+                              .xl + // _MenuTile icon right padding(SizedBox)
+                          (UIConstants.uiSize.md + 2), // _MenuTile icon size
+                      color: Colors.grey.shade100,
+                    ),
                 ],
               );
             }).toList(),
@@ -86,7 +97,7 @@ class _MenuTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final labelColor = item.destructive
-        ? ColorConstants.errorColor
+        ? item.iconColor
         : ColorConstants.defaultTextColor;
 
     return InkWell(
@@ -99,22 +110,17 @@ class _MenuTile extends StatelessWidget {
         child: Row(
           children: [
             // 图标背景
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                color: item.iconColor.withAlpha(25),
-                borderRadius: BorderRadius.circular(7),
-              ),
-              alignment: Alignment.center,
-              child: Icon(item.icon, size: 14, color: item.iconColor),
+            Icon(
+              item.icon,
+              size: UIConstants.uiSize.md + 2,
+              color: item.iconColor,
             ),
-            SizedBox(width: UIConstants.gapSize.lg),
+            SizedBox(width: UIConstants.gapSize.xl),
             // 文字
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: .start,
+                mainAxisSize: .min,
                 children: [
                   Text(
                     item.label,
@@ -126,13 +132,15 @@ class _MenuTile extends StatelessWidget {
                     ),
                   ),
                   if (item.subtitle != null) ...[
-                    SizedBox(height: 2),
+                    SizedBox(height: UIConstants.gapSize.xs),
                     Text(
                       item.subtitle!,
                       style: TextStyle(
-                        fontSize: FontConstants.fontSize.xs ,
+                        fontSize: FontConstants.fontSize.xs,
                         fontFamily: FontConstants.fontFamily,
-                        color: ColorConstants.secondaryTextColor,
+                        color: ColorConstants.defaultTextColor.withAlpha(
+                          (255 * 0.7).toInt(),
+                        ),
                       ),
                     ),
                   ],
@@ -141,7 +149,11 @@ class _MenuTile extends StatelessWidget {
             ),
             // 箭头
             if (!item.destructive)
-              Icon(Icons.chevron_right, size: 18, color: Colors.grey.shade400),
+              Icon(
+                Icons.chevron_right,
+                size: UIConstants.uiSize.md + 2,
+                color: Colors.grey.shade400,
+              ),
           ],
         ),
       ),
