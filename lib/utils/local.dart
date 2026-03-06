@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:pig_counter/constants/err.dart';
-import 'package:pig_counter/models/utils/as.dart';
+import 'package:pig_counter/utils/as.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStore {

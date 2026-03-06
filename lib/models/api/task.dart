@@ -23,7 +23,7 @@ class Pen {
     required this.type,
   });
 
-  factory Pen.fromJson(dynamic json) {
+  factory Pen.fromJSON(dynamic json) {
     if (json is! Map<String, dynamic>) {
       throw FormatException("Invalid JSON format for Pen");
     }
@@ -66,14 +66,14 @@ class Building {
 
   bool get completed => completedPenCount == totalPens && totalPens > 0;
 
-  factory Building.fromJson(dynamic json) {
+  factory Building.fromJSON(dynamic json) {
     if (json is! Map<String, dynamic>) {
       throw FormatException("Invalid JSON format for Building");
     }
     return Building(
       id: json["id"] ?? 0,
       name: json["name"] ?? "",
-      pens: ((json["pens"] ?? []) as List<dynamic>).map(Pen.fromJson).toList(),
+      pens: ((json["pens"] ?? []) as List<dynamic>).map(Pen.fromJSON).toList(),
     );
   }
 }
@@ -99,7 +99,7 @@ class BaseTask {
 
   DateTime get endTimeObject => DateTime.tryParse(endTime)!.toLocal();
 
-  factory BaseTask.fromJson(dynamic json) {
+  factory BaseTask.fromJSON(dynamic json) {
     if (json is! Map<String, dynamic>) {
       throw FormatException("Invalid JSON format for BaseTask");
     }
@@ -150,7 +150,7 @@ class Task extends BaseTask {
 
   bool get outdate => DateTime.now().isAfter(endTimeObject);
 
-  factory Task.fromJson(dynamic json) {
+  factory Task.fromJSON(dynamic json) {
     if (json is! Map<String, dynamic>) {
       throw FormatException("Invalid JSON format for Task");
     }
@@ -162,7 +162,7 @@ class Task extends BaseTask {
       endTime: json["endTime"] ?? "",
       valid: json["valid"] ?? false,
       buildings: ((json["buildings"] ?? []) as List<dynamic>)
-          .map(Building.fromJson)
+          .map(Building.fromJSON)
           .toList(),
     );
   }

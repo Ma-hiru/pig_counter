@@ -59,7 +59,7 @@ class _BuildingItemState extends State<BuildingItem> {
                   Text(
                     "${widget.building.completedPenCount}/${widget.building.totalPens}",
                     style: TextStyle(
-                      fontSize: FontConstants.fontSize.xs + 2,
+                      fontSize: FontConstants.fontSize.xs,
                       fontWeight: FontWeight.w600,
                       color: widget.building.completed
                           ? ColorConstants.successColor
@@ -87,7 +87,7 @@ class _BuildingItemState extends State<BuildingItem> {
                   Text(
                     "${widget.building.completedPenCount} / ${widget.building.totalPens} 栏已完成",
                     style: TextStyle(
-                      fontSize: FontConstants.fontSize.xs + 2,
+                      fontSize: FontConstants.fontSize.xs,
                       color: ColorConstants.defaultTextColor.withAlpha(100),
                     ),
                   ),

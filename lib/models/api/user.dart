@@ -1,4 +1,6 @@
-class UserProfile {
+import 'package:pig_counter/utils/persistence.dart';
+
+class UserProfile implements Persistable<UserProfile> {
   final String id;
   final String username;
   final String name;
@@ -17,7 +19,7 @@ class UserProfile {
     required this.admin,
   });
 
-  factory UserProfile.fromJson(dynamic json) {
+  factory UserProfile.fromJSON(dynamic json) {
     if (json is! Map<String, dynamic>) {
       throw FormatException("Invalid JSON format for UserProfile");
     }
@@ -42,5 +44,21 @@ class UserProfile {
       organization: "",
       admin: false,
     );
+  }
+
+  @override
+  UserProfile fromJSON(json) => UserProfile.fromJSON(json);
+
+  @override
+  Map<String, dynamic> toJSON() {
+    return {
+      "id": id,
+      "username": username,
+      "name": name,
+      "profilePicture": profilePicture,
+      "token": token,
+      "organization": organization,
+      "admin": admin,
+    };
   }
 }

@@ -92,7 +92,7 @@ class _MenuTile extends StatelessWidget {
     return InkWell(
       onTap: item.onTap,
       child: Padding(
-        padding: EdgeInsets.symmetric(
+        padding: .symmetric(
           horizontal: UIConstants.gapSize.xl,
           vertical: UIConstants.gapSize.lg,
         ),
@@ -119,6 +119,7 @@ class _MenuTile extends StatelessWidget {
                   Text(
                     item.label,
                     style: TextStyle(
+                      fontFamily: FontConstants.fontFamily,
                       fontSize: FontConstants.fontSize.sm,
                       fontWeight: FontWeight.w500,
                       color: labelColor,
@@ -129,7 +130,8 @@ class _MenuTile extends StatelessWidget {
                     Text(
                       item.subtitle!,
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: FontConstants.fontSize.xs ,
+                        fontFamily: FontConstants.fontFamily,
                         color: ColorConstants.secondaryTextColor,
                       ),
                     ),

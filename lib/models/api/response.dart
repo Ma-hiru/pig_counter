@@ -38,16 +38,6 @@ class ResponseData<T extends dynamic> {
     }
   }
 
-  static String? getMessageFromJson(dynamic json) {
-    try {
-      final jsonData = json as Map<String, dynamic>;
-      return jsonData['message'];
-    } catch (err) {
-      if (kDebugMode) print("response format error: $err");
-    }
-    return null;
-  }
-
   static ResponseData<T> fromJsonWithType<T>({
     required dynamic json,
     required T Function(dynamic data) handleData,
@@ -64,5 +54,15 @@ class ResponseData<T extends dynamic> {
       if (kDebugMode) print("response format error: $err");
       throw ErrConstants.responseFormatError;
     }
+  }
+
+  static String? getMessageFromJson(dynamic json) {
+    try {
+      final jsonData = json as Map<String, dynamic>;
+      return jsonData['message'];
+    } catch (err) {
+      if (kDebugMode) print("response format error: $err");
+    }
+    return null;
   }
 }

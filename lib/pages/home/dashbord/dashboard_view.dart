@@ -89,9 +89,7 @@ class _DashboardViewState extends State<DashboardView> {
                     ),
                   ],
                 ),
-
                 SizedBox(height: UIConstants.gapSize.xl),
-
                 // ── 功能 ──────────────────────────────────
                 DashboardMenuSection(
                   title: "功能",
@@ -112,9 +110,7 @@ class _DashboardViewState extends State<DashboardView> {
                     ),
                   ],
                 ),
-
                 SizedBox(height: UIConstants.gapSize.xl),
-
                 // ── 系统 ──────────────────────────────────
                 DashboardMenuSection(
                   title: "系统",
@@ -123,7 +119,9 @@ class _DashboardViewState extends State<DashboardView> {
                       icon: LucideIcons.settings,
                       iconColor: Colors.grey.shade600,
                       label: "设置",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, "/settings");
+                      },
                     ),
                     DashboardMenuItem(
                       icon: LucideIcons.info,
@@ -141,7 +139,6 @@ class _DashboardViewState extends State<DashboardView> {
                     ),
                   ],
                 ),
-
                 SizedBox(height: UIConstants.gapSize.xxxl),
               ],
             ),

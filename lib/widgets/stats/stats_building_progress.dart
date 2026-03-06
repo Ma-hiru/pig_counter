@@ -62,7 +62,7 @@ class _BuildingProgressCard extends StatelessWidget {
               Text(
                 "$done / $total 栏",
                 style: TextStyle(
-                  fontSize: FontConstants.fontSize.xs + 2,
+                  fontSize: FontConstants.fontSize.xs,
                   color: ColorConstants.secondaryTextColor,
                 ),
               ),

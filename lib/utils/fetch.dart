@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:pig_counter/constants/http.dart';
 import 'package:pig_counter/models/api/response.dart';
 
-import '../stores/token.dart';
+import 'token.dart';
 
 class _Request {
   final _dio = Dio();
@@ -24,7 +24,7 @@ class _Request {
       InterceptorsWrapper(
         onRequest: (request, handler) {
           final token = tokenManager.getToken();
-          if (token != null) request.headers["Authorization"] = token;
+          if (token is String) request.headers["Authorization"] = token;
           handler.next(request);
         },
         onResponse: (response, handler) {
@@ -78,10 +78,11 @@ class _Request {
 
   Future<ResponseData<T>> get<T>(
     String path,
-    T Function(dynamic data) handleData, {
+    T Function(dynamic data)? handleData, {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) {
+    handleData ??= (v) => v;
     return _handleResponse<T>(
       _dio.get(path, queryParameters: queryParameters, options: options),
       handleData,

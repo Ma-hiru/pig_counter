@@ -1,13 +1,19 @@
 import 'package:get/get.dart';
-import 'package:pig_counter/stores/local.dart';
-import 'package:pig_counter/stores/token.dart';
+import 'package:pig_counter/utils/local.dart';
+import 'package:pig_counter/utils/persistence.dart';
+import 'package:pig_counter/utils/token.dart';
 
 import '../models/api/user.dart';
 
 class UserController extends GetxController {
-  final profile = UserProfile.empty().obs;
+  static const _userProfilePersistenceKey = "user_profile";
   static const _memoPwdKey = "memo_pwd";
   static const _memoUserKey = "memo_user";
+
+  final profile = Persistence.Load(
+    UserProfile.empty(),
+    _userProfilePersistenceKey,
+  ).obs;
 
   void updateUserProfile(UserProfile newProfile) {
     profile.value = newProfile;
@@ -16,6 +22,7 @@ class UserController extends GetxController {
     } else {
       tokenManager.removeToken();
     }
+    Persistence.Save(newProfile, _userProfilePersistenceKey);
   }
 
   void memoUserAndPwd({String? username, String? password}) {

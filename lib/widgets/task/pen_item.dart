@@ -77,7 +77,7 @@ class PenItem extends StatelessWidget {
                     style: TextStyle(
                       color: _statusColor,
                       fontFamily: FontConstants.fontFamily,
-                      fontSize: FontConstants.fontSize.xs + 2,
+                      fontSize: FontConstants.fontSize.xs ,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

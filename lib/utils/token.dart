@@ -1,4 +1,4 @@
-import 'package:pig_counter/stores/local.dart';
+import 'package:pig_counter/utils/local.dart';
 
 class _TokenManager {
   String? _token;

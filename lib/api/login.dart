@@ -12,7 +12,7 @@ Future<ResponseData<UserProfile>> loginByAccount({
 }) {
   return fetch.post(
     APIConstants.loginByAccount,
-    UserProfile.fromJson,
+    UserProfile.fromJSON,
     data: {"username": username, "password": password},
   );
 }
