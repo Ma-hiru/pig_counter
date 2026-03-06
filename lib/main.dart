@@ -10,5 +10,5 @@ void main() {
 Future init() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalStore.init();
-  await initGetXStore();
+  initGetXStore();
 }
