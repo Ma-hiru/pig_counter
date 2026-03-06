@@ -80,7 +80,7 @@ class _SignupPageState extends State<SignupPage> {
       mainAxisAlignment: .end,
       children: [
         AppButton.normal(
-          label: isLoading ? "提交中" : "注册",
+          label: isLoading ? "提交中" : "提交",
           filled: true,
           onPressed: submit,
           disabled: isLoading,

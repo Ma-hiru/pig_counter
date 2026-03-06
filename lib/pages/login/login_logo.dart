@@ -13,20 +13,14 @@ class LoginLogo extends StatefulWidget {
 class _LoginLogoState extends State<LoginLogo> {
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    return Container(
-      alignment: .center,
-      width: double.infinity,
-      height: screenHeight * 0.4,
-      child: Center(
-        child: Text(
-          APPConstants.appName,
-          style: TextStyle(
-            fontFamily: FontConstants.logoFontFamily,
-            color: ColorConstants.themeColor,
-            fontWeight: .bold,
-            fontSize: FontConstants.fontSize.xxl,
-          ),
+    return Center(
+      child: Text(
+        APPConstants.appName,
+        style: TextStyle(
+          fontFamily: FontConstants.logoFontFamily,
+          color: ColorConstants.themeColor,
+          fontWeight: .bold,
+          fontSize: FontConstants.fontSize.xxl,
         ),
       ),
     );
