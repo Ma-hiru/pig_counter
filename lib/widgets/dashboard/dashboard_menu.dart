@@ -75,9 +75,9 @@ class DashboardMenuItem {
   final IconData icon;
   final Color iconColor;
   final String label;
+  final bool flat;
   final String? subtitle;
   final VoidCallback? onTap;
-  final bool destructive;
 
   const DashboardMenuItem({
     required this.icon,
@@ -85,7 +85,7 @@ class DashboardMenuItem {
     required this.label,
     this.subtitle,
     this.onTap,
-    this.destructive = false,
+    this.flat = false,
   });
 }
 
@@ -96,7 +96,7 @@ class _MenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final labelColor = item.destructive
+    final labelColor = item.flat
         ? item.iconColor
         : ColorConstants.defaultTextColor;
 
@@ -148,7 +148,7 @@ class _MenuTile extends StatelessWidget {
               ),
             ),
             // 箭头
-            if (!item.destructive)
+            if (!item.flat)
               Icon(
                 Icons.chevron_right,
                 size: UIConstants.uiSize.md + 2,

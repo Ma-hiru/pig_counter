@@ -10,6 +10,7 @@ class UserController extends GetxController {
   static const _memoPwdKey = "memo_pwd";
   static const _memoUserKey = "memo_user";
 
+  final isLoggedIn = false.obs;
   final profile = Persistence.Load(
     UserProfile.empty(),
     _userProfilePersistenceKey,
@@ -19,8 +20,10 @@ class UserController extends GetxController {
     profile.value = newProfile;
     if (newProfile.token.isNotEmpty) {
       tokenManager.setToken(newProfile.token);
+      isLoggedIn.value = true;
     } else {
       tokenManager.removeToken();
+      isLoggedIn.value = false;
     }
     Persistence.Save(newProfile, _userProfilePersistenceKey);
   }
@@ -40,9 +43,5 @@ class UserController extends GetxController {
 
   String? getMemoPassword() {
     return LocalStore.getItem(UserController._memoPwdKey).maybeString;
-  }
-
-  bool isLoggedIn() {
-    return profile.value.token.isNotEmpty;
   }
 }

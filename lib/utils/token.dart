@@ -1,3 +1,4 @@
+import 'package:pig_counter/constants/http.dart';
 import 'package:pig_counter/utils/local.dart';
 
 class _TokenManager {
@@ -15,7 +16,7 @@ class _TokenManager {
 
   String? getToken() {
     if (_token is String && _token!.isNotEmpty) {
-      return "Bearer $_token";
+      return HTTPConstants.tokenPrefix + _token!;
     } else {
       return null;
     }

@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/routes.dart';
 import 'package:pig_counter/constants/ui.dart';
-import 'package:pig_counter/models/api/user.dart';
 import 'package:pig_counter/stores/user.dart';
+import 'package:pig_counter/utils/dialog.dart';
 import 'package:pig_counter/widgets/dashboard/dashboard_menu.dart';
 import 'package:pig_counter/widgets/dashboard/dashboard_profile_card.dart';
 
@@ -21,28 +21,17 @@ class _DashboardViewState extends State<DashboardView> {
   final UserController _userController = Get.find<UserController>();
 
   void _logout() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text("退出登录"),
-        content: const Text("确定要退出当前账号吗？"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text("取消"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              _userController.updateUserProfile(UserProfile.empty());
-              Navigator.pushNamed(context, RoutesPathConstants.login);
-            },
-            child: const Text(
-              "退出",
-              style: TextStyle(color: ColorConstants.errorColor),
-            ),
-          ),
-        ],
+    AppDialog.show(
+      context,
+      .info(
+        title: "退出登录",
+        description: "确定要退出当前账号吗？",
+        confirmText: "退出",
+        cancelText: "取消",
+        onConfirm: () {
+          _userController.updateUserProfile(.empty());
+          Navigator.pushNamed(context, RoutesPathConstants.login);
+        },
       ),
     );
   }
@@ -57,7 +46,7 @@ class _DashboardViewState extends State<DashboardView> {
             child: Obx(
               () => DashboardProfileCard(
                 profile: _userController.profile.value,
-                isLoggedIn: _userController.isLoggedIn(),
+                isLoggedIn: _userController.isLoggedIn.value,
               ),
             ),
           ),
@@ -94,7 +83,7 @@ class _DashboardViewState extends State<DashboardView> {
                       icon: LucideIcons.history,
                       iconColor: const Color(0xFF2196F3),
                       label: "历史任务",
-                      subtitle: "查看已完成或已归档的任务",
+                      subtitle: "查看已归档的任务",
                       onTap: () {},
                     ),
                     DashboardMenuItem(
@@ -132,7 +121,7 @@ class _DashboardViewState extends State<DashboardView> {
                       icon: LucideIcons.log_out,
                       iconColor: ColorConstants.errorColor,
                       label: "退出登录",
-                      destructive: true,
+                      flat: true,
                       onTap: _logout,
                     ),
                   ],
