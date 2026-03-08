@@ -6,9 +6,11 @@ import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/routes.dart';
 import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/stores/user.dart';
-import 'package:pig_counter/utils/dialog.dart';
-import 'package:pig_counter/widgets/dashboard/dashboard_menu.dart';
+import 'package:pig_counter/utils/modal.dart';
+import 'package:pig_counter/widgets/dashboard/dashboard_menu_section_item.dart';
 import 'package:pig_counter/widgets/dashboard/dashboard_profile_card.dart';
+
+import '../../../widgets/dashboard/dashboard_menu_section.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
@@ -21,9 +23,9 @@ class _DashboardViewState extends State<DashboardView> {
   final UserController _userController = Get.find<UserController>();
 
   void _logout() {
-    AppDialog.show(
+    AppModal.show(
       context,
-      .info(
+      .normal(
         title: "退出登录",
         description: "确定要退出当前账号吗？",
         confirmText: "退出",
@@ -60,14 +62,14 @@ class _DashboardViewState extends State<DashboardView> {
                 DashboardMenuSection(
                   title: "账户",
                   items: [
-                    DashboardMenuItem(
+                    DashboardMenuSectionItem(
                       icon: LucideIcons.user_round_pen,
                       iconColor: ColorConstants.themeColor,
                       label: "编辑资料",
                       subtitle: "修改姓名、组织等信息",
                       onTap: () {},
                     ),
-                    DashboardMenuItem(
+                    DashboardMenuSectionItem(
                       icon: LucideIcons.lock_keyhole,
                       iconColor: const Color(0xFF7B5EA7),
                       label: "修改密码",
@@ -79,14 +81,14 @@ class _DashboardViewState extends State<DashboardView> {
                 DashboardMenuSection(
                   title: "功能",
                   items: [
-                    DashboardMenuItem(
+                    DashboardMenuSectionItem(
                       icon: LucideIcons.history,
                       iconColor: const Color(0xFF2196F3),
                       label: "历史任务",
                       subtitle: "查看已归档的任务",
                       onTap: () {},
                     ),
-                    DashboardMenuItem(
+                    DashboardMenuSectionItem(
                       icon: LucideIcons.chart_bar,
                       iconColor: const Color(0xFFFF7043),
                       label: "数据导出",
@@ -96,35 +98,38 @@ class _DashboardViewState extends State<DashboardView> {
                   ],
                 ),
                 SizedBox(height: UIConstants.gapSize.xl),
-                DashboardMenuSection(
-                  title: "系统",
-                  items: [
-                    DashboardMenuItem(
-                      icon: LucideIcons.settings,
-                      iconColor: Colors.grey.shade600,
-                      label: "设置",
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          RoutesPathConstants.settings,
-                        );
-                      },
-                    ),
-                    DashboardMenuItem(
-                      icon: LucideIcons.info,
-                      iconColor: Colors.grey.shade600,
-                      label: "关于",
-                      subtitle: "版本信息与帮助文档",
-                      onTap: () {},
-                    ),
-                    DashboardMenuItem(
-                      icon: LucideIcons.log_out,
-                      iconColor: ColorConstants.errorColor,
-                      label: "退出登录",
-                      flat: true,
-                      onTap: _logout,
-                    ),
-                  ],
+                Obx(
+                  () => DashboardMenuSection(
+                    title: "系统",
+                    items: [
+                      DashboardMenuSectionItem(
+                        icon: LucideIcons.settings,
+                        iconColor: Colors.grey.shade600,
+                        label: "设置",
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            RoutesPathConstants.settings,
+                          );
+                        },
+                      ),
+                      DashboardMenuSectionItem(
+                        icon: LucideIcons.info,
+                        iconColor: Colors.grey.shade600,
+                        label: "关于",
+                        subtitle: "版本信息与帮助文档",
+                        onTap: () {},
+                      ),
+                      if (_userController.isLoggedIn.value)
+                        DashboardMenuSectionItem(
+                          icon: LucideIcons.log_out,
+                          iconColor: ColorConstants.errorColor,
+                          label: "退出登录",
+                          flat: true,
+                          onTap: _logout,
+                        ),
+                    ],
+                  ),
                 ),
                 SizedBox(height: UIConstants.gapSize.xxxl),
               ],

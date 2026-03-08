@@ -16,10 +16,16 @@ class LocalStore {
   }
 
   static AS getItem(String key) {
+    if (kDebugMode) {
+      print("SharedPreferences getItem $key: ${_prefs.get(key)}");
+    }
     return AS(_prefs.get(key));
   }
 
   static Future<bool> setItem(String key, dynamic value) {
+    if (kDebugMode) {
+      print("SharedPreferences setItem $key: $value");
+    }
     if (value == null) return removeItem(key);
     if (value is int) {
       return _prefs.setInt(key, value);

@@ -65,7 +65,9 @@ class _StatsViewState extends State<StatsView> {
           onSelect: (i) => setState(() => _selectedIndex = i),
         ),
       ),
-      SliverToBoxAdapter(child: SizedBox(height: UIConstants.gapSize.xl)),
+      SliverToBoxAdapter(
+        child: SizedBox(height: UIConstants.contentPaddingFromSides),
+      ),
       SliverPadding(
         padding: EdgeInsets.symmetric(
           horizontal: UIConstants.contentPaddingFromSides,

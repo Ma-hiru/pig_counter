@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pig_counter/widgets/settings/settings_menu_section_item.dart';
 
 import '../../constants/color.dart';
 import '../../constants/ui.dart';
 import '../../models/settings/cache.dart';
-import '../../models/ui/dialog.dart';
-import '../../models/ui/modal.dart';
 import '../../stores/settings.dart';
-import '../../utils/dialog.dart';
 import '../../utils/modal.dart';
 import '../../widgets/header/navigator_app_bar.dart';
-import '../../widgets/settings/settings_menu.dart';
+import '../../widgets/settings/settings_menu_section.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -25,7 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
   void _editImageQuality() {
     AppModal.show(
       context,
-      ModalData(
+      .input(
         title: "图片上传质量",
         description: "设置图片压缩质量（1-100），数值越高画质越好，文件越大",
         initialValue: _settingsController.upload.value.uploadPenImageQuality
@@ -38,10 +36,9 @@ class _SettingsPageState extends State<SettingsPage> {
           return null;
         },
         onConfirm: (value) {
-          final quality = int.parse(value);
           _settingsController.updateUploadSettings(
             _settingsController.upload.value.copyWith(
-              uploadPenImageQuality: quality,
+              uploadPenImageQuality: int.parse(value),
             ),
           );
         },
@@ -52,7 +49,7 @@ class _SettingsPageState extends State<SettingsPage> {
   void _editVideoQuality() {
     AppModal.show(
       context,
-      ModalData(
+      .input(
         title: "视频上传分辨率",
         description: "设置视频上传分辨率（如 480、720、1080）",
         initialValue: _settingsController.upload.value.uploadPenVideoQuality
@@ -79,7 +76,7 @@ class _SettingsPageState extends State<SettingsPage> {
   void _editMaxCacheSize() {
     AppModal.show(
       context,
-      ModalData(
+      .input(
         title: "最大缓存大小",
         description: "设置本地缓存上限（单位：MB）",
         initialValue: _settingsController.cache.value.maxCacheSizeMB.toString(),
@@ -101,16 +98,15 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _clearCache() {
-    AppDialog.show(
+    AppModal.show(
       context,
-      DialogData.error(
+      .normal(
         title: "清除缓存",
+        centerTitle: true,
         description: "确定要清除所有本地缓存数据吗？此操作不可撤销。",
         confirmText: "清除",
         cancelText: "取消",
-        onConfirm: () {
-          CacheSettings.removeCache();
-        },
+        onConfirm: () => CacheSettings.removeCache(),
       ),
     );
   }
@@ -120,28 +116,29 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: NavigatorAppbar(title: "设置"),
       body: Container(
-        width: double.infinity,
+        width: .infinity,
+        height: .infinity,
         color: ColorConstants.backgroundColor,
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
+          padding: const .symmetric(
             horizontal: UIConstants.contentPaddingFromSides,
-            vertical: UIConstants.gapSize.xl,
+            vertical: UIConstants.contentPaddingFromSides,
           ),
           child: Obx(
             () => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [
                 SettingsMenuSection(
                   title: "上传设置",
                   items: [
-                    SettingsMenuItem(
+                    SettingsMenuSectionItem(
                       label: "图片上传质量",
                       subtitle: "图片压缩质量百分比",
                       value:
                           "${_settingsController.upload.value.uploadPenImageQuality}%",
                       onTap: _editImageQuality,
                     ),
-                    SettingsMenuItem(
+                    SettingsMenuSectionItem(
                       label: "视频上传分辨率",
                       subtitle: "视频上传时的分辨率",
                       value:
@@ -154,17 +151,17 @@ class _SettingsPageState extends State<SettingsPage> {
                 SettingsMenuSection(
                   title: "缓存设置",
                   items: [
-                    SettingsMenuItem(
+                    SettingsMenuSectionItem(
                       label: "最大缓存大小",
                       subtitle: "本地缓存占用上限",
                       value:
                           "${_settingsController.cache.value.maxCacheSizeMB} MB",
                       onTap: _editMaxCacheSize,
                     ),
-                    SettingsMenuItem(
+                    SettingsMenuSectionItem(
                       label: "清除缓存",
                       subtitle: "清除所有本地缓存数据",
-                      destructive: true,
+                      flat: true,
                       onTap: _clearCache,
                     ),
                   ],

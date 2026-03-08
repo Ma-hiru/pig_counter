@@ -6,6 +6,7 @@ import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/err.dart';
 import 'package:pig_counter/constants/font.dart';
 import 'package:pig_counter/constants/ui.dart';
+import 'package:pig_counter/models/api/user.dart';
 import 'package:pig_counter/stores/user.dart';
 import 'package:pig_counter/utils/toast.dart';
 
@@ -119,6 +120,21 @@ class _LoginFormState extends State<LoginForm> {
 
   bool isLoading = false;
 
+  void testSubmit() async {
+    if (isLoading) return;
+    setState(() => isLoading = true);
+
+    await Future.delayed(Duration(seconds: 1), () {
+      _userController.updateUserProfile(UserProfile.test());
+      if (mounted) {
+        Navigator.pushNamed(context, RoutesPathConstants.home);
+        Toast.showToast(.success("登录成功"));
+      }
+    });
+
+    setState(() => isLoading = false);
+  }
+
   void submit() async {
     if (isLoading) return;
     if (_formKey.currentState?.validate() != true) return;
@@ -181,7 +197,7 @@ class _LoginFormState extends State<LoginForm> {
             AppButton.normal(
               label: isLoading ? "登录中" : "登录",
               filled: true,
-              onPressed: submit,
+              onPressed: testSubmit,
               disabled: isLoading,
             ),
             SizedBox(height: UIConstants.gapSize.md),

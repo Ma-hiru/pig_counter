@@ -10,11 +10,12 @@ class UserController extends GetxController {
   static const _memoPwdKey = "memo_pwd";
   static const _memoUserKey = "memo_user";
 
-  final isLoggedIn = false.obs;
-  final profile = Persistence.Load(
-    UserProfile.empty(),
-    _userProfilePersistenceKey,
-  ).obs;
+  UserProfile get persistenceLoadedProfile {
+    return Persistence.Load(UserProfile.empty(), _userProfilePersistenceKey);
+  }
+
+  late final isLoggedIn = persistenceLoadedProfile.token.isNotEmpty.obs;
+  late final profile = persistenceLoadedProfile.obs;
 
   void updateUserProfile(UserProfile newProfile) {
     profile.value = newProfile;

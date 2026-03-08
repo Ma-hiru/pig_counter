@@ -11,11 +11,13 @@ class AppButton {
     bool filled = false,
     bool blocked = true,
     bool loading = false,
+    Color? color,
     Function()? onPressed,
   }) {
     final buttonColor = ButtonColor(
       disabled: disabled || loading,
       filled: filled,
+      color: color,
     );
     return SizedBox(
       width: blocked ? double.infinity : null,
@@ -73,10 +75,14 @@ class AppButton {
   static Widget text({
     required String label,
     bool disabled = false,
-    Function()? onPressed,
     Color? color,
+    Function()? onPressed,
   }) {
-    final buttonColor = ButtonColor(disabled: disabled, filled: false);
+    final buttonColor = ButtonColor(
+      disabled: disabled,
+      filled: false,
+      color: color,
+    );
     return OutlinedButton(
       onPressed: () {
         if (!disabled) onPressed?.call();
@@ -105,24 +111,32 @@ class AppButton {
 class ButtonColor {
   bool disabled;
   bool filled;
+  Color? color;
 
-  ButtonColor({required this.disabled, required this.filled});
+  ButtonColor({required this.disabled, required this.filled, this.color});
 
-  Color get themeColor => disabled
-      ? ColorConstants.themeColor.withAlpha(150)
-      : ColorConstants.themeColor;
+  Color get themeColor {
+    if (color is Color) return disabled ? color!.withAlpha(150) : color!;
+    return disabled
+        ? ColorConstants.themeColor.withAlpha(150)
+        : ColorConstants.themeColor;
+  }
+
+  Color get textColorOnFilled => themeColor.computeLuminance() > 0.5
+      ? Color(0XFF000000)
+      : Color(0XFFFFFFFF);
+
+  Color get textColor {
+    var textColor = filled ? textColorOnFilled : themeColor;
+    if (disabled) return textColor.withAlpha(150);
+    return textColor;
+  }
 
   Color get overlayColor => disabled
       ? Colors.transparent
       : filled
-      ? ColorConstants.textColorOnTheme.withAlpha(150)
+      ? textColor.withAlpha(150)
       : themeColor.withAlpha(150);
-
-  Color get textColor {
-    var textColor = filled ? ColorConstants.textColorOnTheme : themeColor;
-    if (disabled) return textColor.withAlpha(150);
-    return textColor;
-  }
 
   Color get backgroundColor => filled ? themeColor : Colors.transparent;
 }

@@ -55,7 +55,9 @@ class _TaskViewState extends State<TaskView> {
         controller: _controller,
         slivers: [
           HomeSliverBar(title: "任务列表", subTitle: "共 ${_taskList.length} 个任务"),
-          SliverToBoxAdapter(child: SizedBox(height: UIConstants.gapSize.lg)),
+          SliverToBoxAdapter(
+            child: SizedBox(height: UIConstants.contentPaddingFromSides),
+          ),
           SliverPadding(
             padding: .symmetric(
               horizontal: UIConstants.contentPaddingFromSides,

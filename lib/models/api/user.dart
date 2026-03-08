@@ -46,6 +46,19 @@ class UserProfile implements Persistable<UserProfile> {
     );
   }
 
+  factory UserProfile.test({int avatarSize = 640}) {
+    return UserProfile(
+      id: "test-id",
+      username: "testuser",
+      name: "测试用户",
+      profilePicture:
+          "https://thirdqq.qlogo.cn/g?b=qq&nk=1759961798&s=${avatarSize.toString()}",
+      token: "test-token",
+      organization: "测试组织",
+      admin: false,
+    );
+  }
+
   @override
   UserProfile fromJSON(json) => UserProfile.fromJSON(json);
 

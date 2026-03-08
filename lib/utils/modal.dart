@@ -2,10 +2,134 @@ import 'package:flutter/material.dart';
 import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/font.dart';
 import 'package:pig_counter/constants/ui.dart';
+import 'package:pig_counter/widgets/button/button.dart';
 
 import '../models/ui/modal.dart';
 
 class AppModal {
+  static Widget buildIndicator() {
+    return Center(
+      child: Container(
+        width: UIConstants.uiSize.xxl,
+        height: UIConstants.uiSize.xs,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: .circular(UIConstants.uiSize.xs / 2),
+        ),
+      ),
+    );
+  }
+
+  static Widget buildTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: FontConstants.fontSize.md,
+        fontFamily: FontConstants.fontFamily,
+        fontWeight: FontWeight.w600,
+        color: ColorConstants.defaultTextColor,
+      ),
+      overflow: .ellipsis,
+    );
+  }
+
+  static Widget buildDescription(String desc) {
+    return Text(
+      desc,
+      style: TextStyle(
+        fontSize: FontConstants.fontSize.xs,
+        fontFamily: FontConstants.fontFamily,
+        color: ColorConstants.secondaryTextColor,
+      ),
+    );
+  }
+
+  static Widget buildInput({
+    required ModalData data,
+    required TextEditingController controller,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: data.keyboardType,
+      validator: data.validator,
+      autofocus: true,
+      style: TextStyle(
+        fontSize: FontConstants.fontSize.md,
+        fontFamily: FontConstants.fontFamily,
+        color: ColorConstants.defaultTextColor,
+      ),
+      decoration: InputDecoration(
+        hintText: data.hintText,
+        hintStyle: TextStyle(
+          fontSize: FontConstants.fontSize.sm,
+          fontFamily: FontConstants.fontFamily,
+          color: ColorConstants.secondaryTextColor.withAlpha(
+            (255 * 0.5).toInt(),
+          ),
+        ),
+        contentPadding: .symmetric(
+          horizontal: UIConstants.gapSize.lg,
+          vertical: UIConstants.gapSize.lg,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: .circular(UIConstants.borderRadius),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: .circular(UIConstants.borderRadius),
+          borderSide: BorderSide(
+            color: ColorConstants.themeColor,
+            width: UIConstants.gapSize.xs,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: .circular(UIConstants.borderRadius),
+          borderSide: const BorderSide(color: ColorConstants.errorColor),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: .circular(UIConstants.borderRadius),
+          borderSide: BorderSide(
+            color: ColorConstants.errorColor,
+            width: UIConstants.gapSize.xs,
+          ),
+        ),
+      ),
+    );
+  }
+
+  static List<Widget> buildButton({
+    required BuildContext ctx,
+    required ModalData data,
+    required TextEditingController controller,
+    required GlobalKey<FormState> formKey,
+  }) {
+    final height = UIConstants.uiSize.xxl;
+    final cancel = SizedBox(
+      height: height,
+      child: AppButton.normal(
+        label: data.cancelText,
+        color: data.cancelColor,
+        onPressed: () => Navigator.pop(ctx),
+      ),
+    );
+    final confirm = SizedBox(
+      height: height,
+      child: AppButton.normal(
+        label: data.confirmText,
+        color: data.confirmColor,
+        filled: true,
+        onPressed: () {
+          if (data.hideInput == true ||
+              (formKey.currentState?.validate() ?? false)) {
+            Navigator.pop(ctx);
+            data.onConfirm?.call(controller.text);
+          }
+        },
+      ),
+    );
+    return [Expanded(child: cancel), Expanded(child: confirm)];
+  }
+
   static void show(BuildContext context, ModalData data) {
     final controller = TextEditingController(text: data.initialValue);
     final formKey = GlobalKey<FormState>();
@@ -15,177 +139,49 @@ class AppModal {
       isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(UIConstants.borderRadius * 2),
-        ),
+        borderRadius: .vertical(top: .circular(UIConstants.borderRadius)),
       ),
       builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
+        padding: .only(
           left: UIConstants.contentPaddingFromSides,
           right: UIConstants.contentPaddingFromSides,
-          top: UIConstants.gapSize.xl,
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + UIConstants.gapSize.xl,
+          top: UIConstants.gapSize.md,
+          bottom:
+              MediaQuery.of(ctx).viewInsets.bottom +
+              MediaQuery.of(ctx).padding.bottom +
+              UIConstants.gapSize.md,
         ),
         child: Form(
           key: formKey,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: .min,
+            crossAxisAlignment: .start,
             children: [
               // 拖拽指示条
-              Center(
-                child: Container(
-                  width: UIConstants.uiSize.xxl,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
+              if (data.showIndicator == true) buildIndicator(),
               SizedBox(height: UIConstants.gapSize.xl),
               // 标题
-              Text(
-                data.title,
-                style: TextStyle(
-                  fontSize: FontConstants.fontSize.lg,
-                  fontFamily: FontConstants.fontFamily,
-                  fontWeight: FontWeight.w600,
-                  color: ColorConstants.defaultTextColor,
-                ),
-              ),
+              buildTitle(data.title),
+              // 描述
               if (data.description != null) ...[
                 SizedBox(height: UIConstants.gapSize.sm),
-                Text(
-                  data.description!,
-                  style: TextStyle(
-                    fontSize: FontConstants.fontSize.xs,
-                    fontFamily: FontConstants.fontFamily,
-                    color: ColorConstants.secondaryTextColor,
-                  ),
-                ),
+                buildDescription(data.description!),
               ],
-              SizedBox(height: UIConstants.gapSize.xl),
               // 输入框
-              TextFormField(
-                controller: controller,
-                keyboardType: data.keyboardType,
-                validator: data.validator,
-                autofocus: true,
-                style: TextStyle(
-                  fontSize: FontConstants.fontSize.md,
-                  fontFamily: FontConstants.fontFamily,
-                  color: ColorConstants.defaultTextColor,
-                ),
-                decoration: InputDecoration(
-                  hintText: data.hintText,
-                  hintStyle: TextStyle(
-                    fontSize: FontConstants.fontSize.sm,
-                    fontFamily: FontConstants.fontFamily,
-                    color: ColorConstants.secondaryTextColor.withAlpha(
-                      (255 * 0.5).toInt(),
-                    ),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: UIConstants.gapSize.lg,
-                    vertical: UIConstants.gapSize.lg,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      UIConstants.borderRadius,
-                    ),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      UIConstants.borderRadius,
-                    ),
-                    borderSide: const BorderSide(
-                      color: ColorConstants.themeColor,
-                      width: 1.5,
-                    ),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      UIConstants.borderRadius,
-                    ),
-                    borderSide: const BorderSide(
-                      color: ColorConstants.errorColor,
-                    ),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      UIConstants.borderRadius,
-                    ),
-                    borderSide: const BorderSide(
-                      color: ColorConstants.errorColor,
-                      width: 1.5,
-                    ),
-                  ),
-                ),
-              ),
+              if (data.hideInput != true) ...[
+                SizedBox(height: UIConstants.gapSize.xl),
+                buildInput(data: data, controller: controller),
+              ],
               SizedBox(height: UIConstants.gapSize.xl),
               // 按钮
               Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: UIConstants.uiSize.xxl,
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(ctx),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey.shade300),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              UIConstants.borderRadius,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          data.cancelText,
-                          style: TextStyle(
-                            fontSize: FontConstants.fontSize.sm,
-                            fontFamily: FontConstants.fontFamily,
-                            fontWeight: FontWeight.w500,
-                            color: ColorConstants.secondaryTextColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: UIConstants.gapSize.lg),
-                  Expanded(
-                    child: SizedBox(
-                      height: UIConstants.uiSize.xxl,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (formKey.currentState?.validate() ?? false) {
-                            Navigator.pop(ctx);
-                            data.onConfirm?.call(controller.text);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorConstants.themeColor,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              UIConstants.borderRadius,
-                            ),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          data.confirmText,
-                          style: TextStyle(
-                            fontSize: FontConstants.fontSize.sm,
-                            fontFamily: FontConstants.fontFamily,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                spacing: UIConstants.gapSize.lg,
+                children: buildButton(
+                  ctx: ctx,
+                  data: data,
+                  controller: controller,
+                  formKey: formKey,
+                ),
               ),
               SizedBox(height: UIConstants.gapSize.md),
             ],

@@ -8,6 +8,10 @@ class ModalData {
   final String confirmText;
   final String cancelText;
   final TextInputType keyboardType;
+  final Color? confirmColor;
+  final Color? cancelColor;
+  final bool? hideInput;
+  final bool? showIndicator;
   final String? Function(String?)? validator;
   final void Function(String value)? onConfirm;
 
@@ -21,5 +25,65 @@ class ModalData {
     this.keyboardType = TextInputType.text,
     this.validator,
     this.onConfirm,
+    this.hideInput,
+    this.showIndicator,
+    this.cancelColor,
+    this.confirmColor,
   });
+
+  factory ModalData.input({
+    required String title,
+    String? description,
+    String initialValue = "",
+    String hintText = "",
+    String confirmText = "确定",
+    String cancelText = "取消",
+    TextInputType keyboardType = TextInputType.text,
+    bool showIndicator = true,
+    bool centerTitle = false,
+    Color? confirmColor,
+    Color? cancelColor,
+    String? Function(String?)? validator,
+    void Function(String value)? onConfirm,
+  }) {
+    return ModalData(
+      title: title,
+      description: description,
+      initialValue: initialValue,
+      hintText: hintText,
+      confirmText: confirmText,
+      cancelText: cancelText,
+      keyboardType: keyboardType,
+      validator: validator,
+      onConfirm: onConfirm,
+      hideInput: false,
+      showIndicator: showIndicator,
+      confirmColor: confirmColor,
+      cancelColor: cancelColor,
+    );
+  }
+
+  factory ModalData.normal({
+    required String title,
+    String? description,
+    String confirmText = "确定",
+    String cancelText = "取消",
+    bool showIndicator = false,
+    bool centerTitle = false,
+    Color? confirmColor,
+    Color? cancelColor,
+    VoidCallback? onConfirm,
+  }) {
+    return ModalData(
+      title: title,
+      description: description,
+      confirmText: confirmText,
+      cancelText: cancelText,
+      onConfirm: (_) => onConfirm?.call(),
+      hideInput: true,
+      showIndicator: showIndicator,
+      confirmColor: confirmColor,
+      cancelColor: cancelColor,
+    );
+  }
 }

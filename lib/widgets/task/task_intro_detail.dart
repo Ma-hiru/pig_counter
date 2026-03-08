@@ -23,7 +23,7 @@ class _TaskIntroDetailState extends State<TaskIntroDetail> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         // 展开 / 收起 按钮
         GestureDetector(

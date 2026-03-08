@@ -96,7 +96,8 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       appBar: NavigatorAppbar(title: "注册"),
       body: Container(
-        width: double.infinity,
+        width: .infinity,
+        height: .infinity,
         color: ColorConstants.backgroundColor,
         padding: const .symmetric(
           horizontal: UIConstants.contentPaddingFromSides,

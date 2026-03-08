@@ -39,6 +39,19 @@ class Pen {
     );
   }
 
+  factory Pen.empty() {
+    return Pen(
+      id: -1,
+      name: "",
+      aiCount: 0,
+      manualCount: 0,
+      uploadPath: "",
+      outputPath: "",
+      status: false,
+      type: UploadType.none,
+    );
+  }
+
   static UploadType parseUploadType(dynamic type) {
     switch (type) {
       case "image":
@@ -76,6 +89,10 @@ class Building {
       pens: ((json["pens"] ?? []) as List<dynamic>).map(Pen.fromJSON).toList(),
     );
   }
+
+  factory Building.empty() {
+    return Building(id: -1, name: "", pens: []);
+  }
 }
 
 class BaseTask {
@@ -110,6 +127,17 @@ class BaseTask {
       startTime: json["startTime"] ?? "",
       endTime: json["endTime"] ?? "",
       valid: json["valid"] ?? false,
+    );
+  }
+
+  factory BaseTask.empty() {
+    return BaseTask(
+      id: -1,
+      name: "",
+      employeeId: -1,
+      startTime: DateTime.now().toUtc().toIso8601String(),
+      endTime: DateTime.now().add(Duration(hours: 1)).toUtc().toIso8601String(),
+      valid: true,
     );
   }
 }
@@ -285,6 +313,18 @@ class Task extends BaseTask {
           ],
         ),
       ],
+    );
+  }
+
+  factory Task.empty() {
+    return Task(
+      id: -1,
+      name: "",
+      employeeId: -1,
+      startTime: DateTime.now().toUtc().toIso8601String(),
+      endTime: DateTime.now().add(Duration(hours: 1)).toUtc().toIso8601String(),
+      valid: true,
+      buildings: [],
     );
   }
 }

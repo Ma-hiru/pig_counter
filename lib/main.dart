@@ -4,7 +4,9 @@ import 'package:pig_counter/stores/init.dart';
 import 'package:pig_counter/utils/local.dart';
 
 void main() {
-  init().then((value) => runApp(getRootWidget()));
+  init().then((_) {
+    runApp(getRootWidget());
+  });
 }
 
 Future init() async {

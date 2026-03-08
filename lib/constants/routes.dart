@@ -3,4 +3,5 @@ class RoutesPathConstants {
   static const String login = "/login";
   static const String signup = "/signup";
   static const String settings = "/settings";
+  static const String upload = "/upload";
 }

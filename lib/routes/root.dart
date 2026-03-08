@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:pig_counter/pages/upload/upload_page.dart';
 
 import '../constants/routes.dart';
 import '../pages/home/home_page.dart';
@@ -16,6 +17,7 @@ Widget getRootWidget() {
         RoutesPathConstants.login: (ctx) => const LoginPage(),
         RoutesPathConstants.signup: (ctx) => const SignupPage(),
         RoutesPathConstants.settings: (ctx) => const SettingsPage(),
+        RoutesPathConstants.upload: (ctx) => const UploadPage(),
       },
     ),
   );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pig_counter/constants/routes.dart';
 import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/models/api/task.dart';
+import 'package:pig_counter/models/routes/upload_route_param.dart';
 import 'package:pig_counter/widgets/task/task_intro_detail.dart';
 import 'package:pig_counter/widgets/task/task_intro_header.dart';
 import 'package:pig_counter/widgets/task/task_intro_info.dart';
@@ -15,6 +17,14 @@ class TaskIntro extends StatefulWidget {
 }
 
 class _TaskIntroState extends State<TaskIntro> {
+  void onTapDetailPen(Pen pen) {
+    Navigator.pushNamed(
+      context,
+      RoutesPathConstants.upload,
+      arguments: UploadRouteParam(task: widget.taskData, pen: pen),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card.filled(
@@ -42,7 +52,7 @@ class _TaskIntroState extends State<TaskIntro> {
               thickness: 1,
               color: Colors.grey[300],
             ),
-            TaskIntroDetail(taskData: widget.taskData, onTap: (pen) {}),
+            TaskIntroDetail(taskData: widget.taskData, onTap: onTapDetailPen),
           ],
         ),
       ),
