@@ -14,13 +14,13 @@ class UploadOptions {
 
   UploadOptions({required this.settingsController});
 
-  Future<File?> selectImage() async {
+  Future<String?> selectImage() async {
     try {
       final XFile? picked = await picker.pickImage(
         source: .gallery,
         imageQuality: settingsController.upload.value.uploadPenImageQuality,
       );
-      if (picked != null) return File(picked.path);
+      if (picked != null) return picked.path;
     } catch (err) {
       if (kDebugMode) print("Failed to pick image: $err");
       Toast.showToast(.error(ErrMsgConstants.selectImageFailed));
@@ -28,14 +28,14 @@ class UploadOptions {
     return null;
   }
 
-  Future<File?> selectVideo() async {
+  Future<String?> selectVideo() async {
     try {
       final XFile? picked = await picker.pickVideo(
         source: .gallery,
         preferredCameraDevice: .rear,
         maxDuration: const Duration(minutes: 1),
       );
-      if (picked != null) return File(picked.path);
+      if (picked != null) return picked.path;
     } catch (err) {
       if (kDebugMode) print("Failed to pick video: $err");
       Toast.showToast(.error(ErrMsgConstants.selectVideoFailed));

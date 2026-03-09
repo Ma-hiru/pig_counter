@@ -76,7 +76,7 @@ class _UploadPageState extends State<UploadPage> {
         ],
       );
     }
-    return AppTips.icon("正在加载", type: .loading);
+    return AppTips.icon(text: "正在加载", type: .loading);
   }
 
   @override

@@ -19,6 +19,9 @@ dependencies:
   intl: ^0.20.2
   awesome_dialog: ^3.3.0
   video_player: ^2.11.0
+  video_player_media_kit: ^2.0.0
+  media_kit_libs_windows_video: any
+  media_kit_libs_linux: any
 
 dev_dependencies:
   flutter_test:

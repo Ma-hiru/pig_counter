@@ -16,6 +16,20 @@ class UploadActions extends StatelessWidget {
     required this.uploadOptions,
   });
 
+  void selectImage() async {
+    final image = await uploadOptions.selectImage();
+    if (image is String) {
+      onChange(pen.copyWith(localPath: image, localType: .image));
+    }
+  }
+
+  void selectVideo() async {
+    final video = await uploadOptions.selectVideo();
+    if (video is String) {
+      onChange(pen.copyWith(localPath: video, localType: .video));
+    }
+  }
+
   List<Widget> buildActions() {
     // 已完成
     if (pen.status) return [];
@@ -42,8 +56,8 @@ class UploadActions extends StatelessWidget {
     }
     // 未选择
     return [
-      AppButton.normal(label: "图片", filled: true),
-      AppButton.normal(label: "视频", filled: true),
+      AppButton.normal(label: "图片", filled: true, onPressed: selectImage),
+      AppButton.normal(label: "视频", filled: true, onPressed: selectVideo),
     ];
   }
 

@@ -30,8 +30,8 @@ class _LoadingIconState extends State<LoadingIcon>
 
   @override
   void dispose() {
-    super.dispose();
     controller.dispose();
+    super.dispose();
   }
 
   @override

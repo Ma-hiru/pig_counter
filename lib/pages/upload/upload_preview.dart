@@ -1,17 +1,15 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/models/api/task.dart';
 import 'package:pig_counter/widgets/loading/loading.dart';
-import 'package:video_player/video_player.dart';
 
-import '../../widgets/upload/video_perview.dart';
+import '../../widgets/preview/image_preview.dart';
+import '../../widgets/preview/video_preview.dart';
 
 class UploadPreview extends StatelessWidget {
   final Pen pen;
   final VoidCallback? onTap;
+  final GlobalKey<VideoPreviewState> videoKey = GlobalKey();
 
   String? get displayURL {
     if (pen.outputPath.isNotEmpty == true) {
@@ -46,7 +44,7 @@ class UploadPreview extends StatelessWidget {
     }
   }
 
-  const UploadPreview({super.key, required this.pen, this.onTap});
+  UploadPreview({super.key, required this.pen, this.onTap});
 
   Widget buildBlank() {
     return AspectRatio(
@@ -54,30 +52,19 @@ class UploadPreview extends StatelessWidget {
       child: Container(
         alignment: .center,
         width: double.infinity,
-        child: AppTips.icon("未选择文件", type: .blank),
+        child: AppTips.icon(text: "未选择文件", type: .blank),
       ),
     );
   }
 
   Widget buildImagePreview() {
     if (displayURL == null) return buildBlank();
-    if (isLocal) return Image.file(File(displayURL!));
-    return Image.network(displayURL!);
+    return ImagePreview(url: displayURL!, isLocal: isLocal);
   }
 
   Widget buildVideoPreview() {
     if (displayURL == null) return buildBlank();
-    return Stack(
-      alignment: .center,
-      children: [
-        VideoPreview(url: displayURL!, isLocal: isLocal),
-        Icon(
-          Icons.play_circle,
-          size: UIConstants.uiSize.xxxl,
-          color: Colors.white,
-        ),
-      ],
-    );
+    return VideoPreview(key: videoKey, url: displayURL!, isLocal: isLocal);
   }
 
   @override

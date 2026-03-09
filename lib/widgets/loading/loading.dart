@@ -47,13 +47,17 @@ class AppTips {
     );
   }
 
-  static Widget icon(String text, {AppTipsType type = .loading, double? size}) {
+  static Widget icon({
+    AppTipsType type = .loading,
+    String? text,
+    double? size,
+  }) {
     return Column(
       mainAxisAlignment: .center,
       crossAxisAlignment: .center,
       mainAxisSize: .min,
-      spacing: UIConstants.gapSize.lg,
-      children: [_buildIcon(type, size), _buildText(text)],
+      spacing: text is String ? UIConstants.gapSize.lg : 0,
+      children: [_buildIcon(type, size), if (text is String) _buildText(text)],
     );
   }
 }

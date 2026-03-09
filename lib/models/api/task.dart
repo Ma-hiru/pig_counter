@@ -54,6 +54,32 @@ class Pen {
     );
   }
 
+  Pen copyWith({
+    int? id,
+    String? name,
+    int? aiCount,
+    int? manualCount,
+    String? uploadPath,
+    String? outputPath,
+    bool? status,
+    UploadType? type,
+    String? localPath,
+    UploadType? localType,
+  }) {
+    return Pen(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        aiCount: aiCount ?? this.aiCount,
+        manualCount: manualCount ?? this.manualCount,
+        uploadPath: uploadPath ?? this.uploadPath,
+        outputPath: outputPath ?? this.outputPath,
+        status: status ?? this.status,
+        type: type ?? this.type,
+      )
+      ..localPath = localPath ?? this.localPath
+      ..localType = localType ?? this.localType;
+  }
+
   static UploadType parseUploadType(dynamic type) {
     switch (type) {
       case "image":
