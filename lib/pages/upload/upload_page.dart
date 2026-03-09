@@ -1,14 +1,19 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pig_counter/api/index.dart';
 import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/err.dart';
 import 'package:pig_counter/models/routes/upload_route_param.dart';
 import 'package:pig_counter/pages/upload/upload_actions.dart';
+import 'package:pig_counter/pages/upload/upload_options.dart';
 import 'package:pig_counter/pages/upload/upload_preview.dart';
 import 'package:pig_counter/utils/toast.dart';
+import 'package:pig_counter/widgets/loading/loading.dart';
 
 import '../../constants/ui.dart';
+import '../../stores/settings.dart';
 import '../../widgets/header/navigator_app_bar.dart';
 
 class UploadPage extends StatefulWidget {
@@ -19,7 +24,9 @@ class UploadPage extends StatefulWidget {
 }
 
 class _UploadPageState extends State<UploadPage> {
+  final SettingsController settingsController = Get.find<SettingsController>();
   UploadRouteParam? latestData;
+  UploadOptions? uploadOptions;
 
   UploadRouteParam getRouteParam() {
     return ModalRoute.of(context)?.settings.arguments as UploadRouteParam? ??
@@ -27,6 +34,7 @@ class _UploadPageState extends State<UploadPage> {
   }
 
   Future fetchLatestData() async {
+    if (kDebugMode) return setState(() => latestData = getRouteParam());
     try {
       final routeParam = getRouteParam();
       final response = await API.Task.detail(routeParam.task.id);
@@ -36,8 +44,9 @@ class _UploadPageState extends State<UploadPage> {
         (b) => b.id == routeParam.building.id,
       );
       final pen = building.pens.firstWhere((p) => p.id == routeParam.pen.id);
-
-      latestData = UploadRouteParam(task: task, building: building, pen: pen);
+      setState(() {
+        latestData = UploadRouteParam(task: task, building: building, pen: pen);
+      });
     } on DioException {
       Toast.showToast(.error(ErrMsgConstants.networkError));
     } catch (err) {
@@ -49,10 +58,32 @@ class _UploadPageState extends State<UploadPage> {
     }
   }
 
+  Widget buildContent() {
+    if (latestData != null && uploadOptions != null) {
+      return Column(
+        mainAxisAlignment: .spaceBetween,
+        children: [
+          UploadPreview(pen: latestData!.pen),
+          UploadActions(
+            pen: latestData!.pen,
+            uploadOptions: uploadOptions!,
+            onChange: (pen) {
+              setState(() {
+                latestData = latestData!.copyWith(pen: pen);
+              });
+            },
+          ),
+        ],
+      );
+    }
+    return AppTips.icon("正在加载", type: .loading);
+  }
+
   @override
   void initState() {
     super.initState();
-    fetchLatestData();
+    uploadOptions = UploadOptions(settingsController: settingsController);
+    Future.microtask(fetchLatestData);
   }
 
   @override
@@ -66,10 +97,11 @@ class _UploadPageState extends State<UploadPage> {
         width: .infinity,
         height: .infinity,
         color: ColorConstants.backgroundColor,
-        padding: const .symmetric(
+        padding: .symmetric(
           horizontal: UIConstants.contentPaddingFromSides,
+          vertical: UIConstants.gapSize.md,
         ),
-        child: Column(children: [const UploadPreview(), const UploadActions()]),
+        child: buildContent(),
       ),
     );
   }

@@ -4,14 +4,15 @@ enum UploadType { none, image, video }
 
 class Pen {
   int id;
-  String name;
   int aiCount;
   int manualCount;
+  bool status;
+  String name;
   String uploadPath;
   String outputPath;
-  String? localPath;
-  bool status;
   UploadType type;
+  String? localPath;
+  UploadType? localType;
 
   Pen({
     required this.id,
