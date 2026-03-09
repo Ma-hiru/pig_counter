@@ -6,64 +6,82 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:pig_counter/constants/ui.dart';
 
-class ImagePreview extends StatefulWidget {
+class ImagePreview extends StatelessWidget {
   final String url;
   final bool isLocal;
 
   const ImagePreview({super.key, required this.url, required this.isLocal});
 
+  void _enterFullscreen(BuildContext context) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        opaque: true,
+        pageBuilder: (_, _, _) =>
+            _FullscreenImagePage(url: url, isLocal: isLocal),
+      ),
+    );
+  }
+
   @override
-  State<ImagePreview> createState() => _ImagePreviewState();
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _enterFullscreen(context),
+      child: AspectRatio(
+        aspectRatio: 3 / 2,
+        child: isLocal
+            ? Image.file(File(url), fit: .cover)
+            : Image.network(url, fit: .cover),
+      ),
+    );
+  }
 }
 
-class _ImagePreviewState extends State<ImagePreview> {
-  bool _isFullscreen = false;
+class _FullscreenImagePage extends StatefulWidget {
+  final String url;
+  final bool isLocal;
+
+  const _FullscreenImagePage({required this.url, required this.isLocal});
+
+  @override
+  State<_FullscreenImagePage> createState() => _FullscreenImagePageState();
+}
+
+class _FullscreenImagePageState extends State<_FullscreenImagePage> {
   bool _showControls = true;
   int _rotationQuarterTurns = 0;
-  OverlayEntry? _fullscreenOverlay;
 
-  void _updatePage() {
-    setState(() => _fullscreenOverlay?.markNeedsBuild());
-  }
+  ImageProvider get _imageProvider =>
+      widget.isLocal ? FileImage(File(widget.url)) : NetworkImage(widget.url);
 
-  void _rotate() {
-    _rotationQuarterTurns = (_rotationQuarterTurns + 1) % 4;
-    _updatePage();
-  }
+  void _exit() => Navigator.of(context).pop();
 
-  void _toggleControls() {
-    _showControls = !_showControls;
-    _updatePage();
-  }
+  void _toggleControls() => setState(() => _showControls = !_showControls);
 
-  void _enterFullscreen() {
-    _isFullscreen = true;
-    _showControls = true;
-    _fullscreenOverlay = OverlayEntry(builder: (_) => _buildFullscreenUI());
+  void _rotate() =>
+      setState(() => _rotationQuarterTurns = (_rotationQuarterTurns + 1) % 4);
+
+  @override
+  void initState() {
+    super.initState();
     SystemChrome.setEnabledSystemUIMode(.immersiveSticky);
-    Overlay.of(context).insert(_fullscreenOverlay!);
-    _updatePage();
   }
 
-  void _exitFullscreen() {
-    if (!_isFullscreen) return;
-    _isFullscreen = false;
-    _showControls = true;
-    _fullscreenOverlay?.remove();
-    _fullscreenOverlay = null;
+  @override
+  void dispose() {
     SystemChrome.setEnabledSystemUIMode(.edgeToEdge);
-    _updatePage();
+    super.dispose();
   }
 
-  Widget _buildFullscreenUI() {
+  @override
+  Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _exitFullscreen();
+        if (!didPop) _exit();
       },
-      child: Material(
-        color: Colors.black,
-        child: GestureDetector(
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: GestureDetector(
           onTap: _toggleControls,
           child: Stack(
             children: [
@@ -71,9 +89,7 @@ class _ImagePreviewState extends State<ImagePreview> {
                 child: RotatedBox(
                   quarterTurns: _rotationQuarterTurns,
                   child: PhotoView(
-                    imageProvider: widget.isLocal
-                        ? FileImage(File(widget.url))
-                        : NetworkImage(widget.url),
+                    imageProvider: _imageProvider,
                     backgroundDecoration: const BoxDecoration(
                       color: Colors.black,
                     ),
@@ -88,7 +104,7 @@ class _ImagePreviewState extends State<ImagePreview> {
                   left: UIConstants.gapSize.xl,
                   child: _ControlButton(
                     icon: LucideIcons.arrow_left,
-                    onTap: _exitFullscreen,
+                    onTap: _exit,
                   ),
                 ),
               if (_showControls)
@@ -118,7 +134,7 @@ class _ImagePreviewState extends State<ImagePreview> {
                         ),
                         _ControlButton(
                           icon: LucideIcons.minimize,
-                          onTap: _exitFullscreen,
+                          onTap: _exit,
                         ),
                       ],
                     ),
@@ -127,25 +143,6 @@ class _ImagePreviewState extends State<ImagePreview> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _exitFullscreen();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _enterFullscreen,
-      child: AspectRatio(
-        aspectRatio: 3 / 2,
-        child: widget.isLocal
-            ? Image.file(File(widget.url), fit: .cover)
-            : Image.network(widget.url, fit: .cover),
       ),
     );
   }
