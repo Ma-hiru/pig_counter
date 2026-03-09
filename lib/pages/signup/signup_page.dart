@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pig_counter/api/login.dart';
+import 'package:pig_counter/api/index.dart';
 import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/pages/signup/signup_form.dart';
 import 'package:pig_counter/utils/toast.dart';
@@ -48,7 +48,7 @@ class _SignupPageState extends State<SignupPage> {
     setState(() => isLoading = true);
 
     try {
-      final signupResult = await signupByAccount(
+      final signupResult = await API.Auth.signup(
         username: username,
         password: password,
         avatar: avatar,

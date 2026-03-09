@@ -9,7 +9,7 @@ import 'building_item.dart';
 
 class TaskIntroDetail extends StatefulWidget {
   final Task taskData;
-  final void Function(Pen pen)? onTap;
+  final void Function(Building building, Pen pen)? onTap;
 
   const TaskIntroDetail({super.key, required this.taskData, this.onTap});
 

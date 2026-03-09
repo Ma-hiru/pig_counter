@@ -20,6 +20,7 @@ AppBar NavigatorAppbar({required String title}) {
         color: ColorConstants.themeColor,
         fontWeight: .w700,
       ),
+      overflow: .fade,
     ),
     centerTitle: false,
   );

@@ -9,6 +9,7 @@ class Pen {
   int manualCount;
   String uploadPath;
   String outputPath;
+  String? localPath;
   bool status;
   UploadType type;
 

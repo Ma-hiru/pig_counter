@@ -17,11 +17,15 @@ class TaskIntro extends StatefulWidget {
 }
 
 class _TaskIntroState extends State<TaskIntro> {
-  void onTapDetailPen(Pen pen) {
+  void onTapDetailPen(Building building, Pen pen) {
     Navigator.pushNamed(
       context,
       RoutesPathConstants.upload,
-      arguments: UploadRouteParam(task: widget.taskData, pen: pen),
+      arguments: UploadRouteParam(
+        task: widget.taskData,
+        building: building,
+        pen: pen,
+      ),
     );
   }
 

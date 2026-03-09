@@ -8,7 +8,7 @@ import 'building_item_title_row.dart';
 
 class BuildingItem extends StatefulWidget {
   final Building building;
-  final void Function(Pen pen)? onPenTap;
+  final void Function(Building building, Pen pen)? onPenTap;
 
   const BuildingItem({super.key, required this.building, this.onPenTap});
 
@@ -42,7 +42,7 @@ class _BuildingItemState extends State<BuildingItem> {
                   (pen) => PenItem(
                     pen: pen,
                     isLast: pen == widget.building.pens.last,
-                    onTap: widget.onPenTap,
+                    onTap: (pen) => widget.onPenTap?.call(widget.building, pen),
                   ),
                 ),
               ],

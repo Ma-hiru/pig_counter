@@ -38,6 +38,24 @@ class ResponseData<T extends dynamic> {
     }
   }
 
+  factory ResponseData.success(T data) {
+    return ResponseData<T>(
+      ok: true,
+      code: 200,
+      message: "test success",
+      data: data,
+    );
+  }
+
+  factory ResponseData.error(T data) {
+    return ResponseData<T>(
+      ok: false,
+      code: 201,
+      message: "test error",
+      data: data,
+    );
+  }
+
   static ResponseData<T> fromJsonWithType<T>({
     required dynamic json,
     required T Function(dynamic data) handleData,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:get/get.dart';
-import 'package:pig_counter/api/login.dart';
+import 'package:pig_counter/api/index.dart';
 import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/err.dart';
 import 'package:pig_counter/constants/font.dart';
@@ -149,7 +149,7 @@ class _LoginFormState extends State<LoginForm> {
     }
 
     try {
-      final userProfile = await loginByAccount(
+      final userProfile = await API.Auth.login(
         username: username,
         password: password,
       );
