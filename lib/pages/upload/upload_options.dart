@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pig_counter/stores/settings.dart';
