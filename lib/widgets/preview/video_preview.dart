@@ -197,35 +197,41 @@ class VideoPreviewState extends State<VideoPreview> {
         ),
       );
     }
-    return Material(
-      color: Colors.black,
-      child: Stack(
-        alignment: .center,
-        children: [
-          Center(
-            child: RotatedBox(
-              quarterTurns: _rotationQuarterTurns,
-              child: AspectRatio(
-                aspectRatio: controller.value.aspectRatio,
-                child: GestureDetector(
-                  onTap: _handleVideoTap,
-                  child: VideoPlayer(controller),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _exitFullscreen();
+      },
+      child: Material(
+        color: Colors.black,
+        child: Stack(
+          alignment: .center,
+          children: [
+            Center(
+              child: RotatedBox(
+                quarterTurns: _rotationQuarterTurns,
+                child: AspectRatio(
+                  aspectRatio: controller.value.aspectRatio,
+                  child: GestureDetector(
+                    onTap: _handleVideoTap,
+                    child: VideoPlayer(controller),
+                  ),
                 ),
               ),
             ),
-          ),
-          if (_showControls || _showPauseIcon) _buildPlayPauseButton(),
-          if (_showControls) _buildBottomControls(),
-          if (_showControls)
-            Positioned(
-              top: UIConstants.gapSize.xl,
-              left: UIConstants.gapSize.xl,
-              child: _ControlButton(
-                icon: LucideIcons.arrow_left,
-                onTap: _exitFullscreen,
+            if (_showControls || _showPauseIcon) _buildPlayPauseButton(),
+            if (_showControls) _buildBottomControls(),
+            if (_showControls)
+              Positioned(
+                top: UIConstants.gapSize.xl,
+                left: UIConstants.gapSize.xl,
+                child: _ControlButton(
+                  icon: LucideIcons.arrow_left,
+                  onTap: _exitFullscreen,
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

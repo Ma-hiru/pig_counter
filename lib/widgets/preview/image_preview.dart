@@ -56,70 +56,76 @@ class _ImagePreviewState extends State<ImagePreview> {
   }
 
   Widget _buildFullscreenUI() {
-    return Material(
-      color: Colors.black,
-      child: GestureDetector(
-        onTap: _toggleControls,
-        child: Stack(
-          children: [
-            Center(
-              child: RotatedBox(
-                quarterTurns: _rotationQuarterTurns,
-                child: PhotoView(
-                  imageProvider: widget.isLocal
-                      ? FileImage(File(widget.url))
-                      : NetworkImage(widget.url),
-                  backgroundDecoration: const BoxDecoration(
-                    color: Colors.black,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _exitFullscreen();
+      },
+      child: Material(
+        color: Colors.black,
+        child: GestureDetector(
+          onTap: _toggleControls,
+          child: Stack(
+            children: [
+              Center(
+                child: RotatedBox(
+                  quarterTurns: _rotationQuarterTurns,
+                  child: PhotoView(
+                    imageProvider: widget.isLocal
+                        ? FileImage(File(widget.url))
+                        : NetworkImage(widget.url),
+                    backgroundDecoration: const BoxDecoration(
+                      color: Colors.black,
+                    ),
+                    minScale: PhotoViewComputedScale.contained,
+                    maxScale: PhotoViewComputedScale.covered * 3,
                   ),
-                  minScale: PhotoViewComputedScale.contained,
-                  maxScale: PhotoViewComputedScale.covered * 3,
                 ),
               ),
-            ),
-            if (_showControls)
-              Positioned(
-                top: UIConstants.gapSize.xl,
-                left: UIConstants.gapSize.xl,
-                child: _ControlButton(
-                  icon: LucideIcons.arrow_left,
-                  onTap: _exitFullscreen,
+              if (_showControls)
+                Positioned(
+                  top: UIConstants.gapSize.xl,
+                  left: UIConstants.gapSize.xl,
+                  child: _ControlButton(
+                    icon: LucideIcons.arrow_left,
+                    onTap: _exitFullscreen,
+                  ),
                 ),
-              ),
-            if (_showControls)
-              Positioned(
-                right: 0,
-                left: 0,
-                bottom: 0,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: .bottomCenter,
-                      end: .topCenter,
-                      colors: [Colors.black54, Colors.transparent],
+              if (_showControls)
+                Positioned(
+                  right: 0,
+                  left: 0,
+                  bottom: 0,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: .bottomCenter,
+                        end: .topCenter,
+                        colors: [Colors.black54, Colors.transparent],
+                      ),
+                    ),
+                    padding: .symmetric(
+                      horizontal: UIConstants.gapSize.md,
+                      vertical: UIConstants.gapSize.md,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: .end,
+                      spacing: UIConstants.gapSize.md,
+                      children: [
+                        _ControlButton(
+                          icon: LucideIcons.rotate_cw,
+                          onTap: _rotate,
+                        ),
+                        _ControlButton(
+                          icon: LucideIcons.minimize,
+                          onTap: _exitFullscreen,
+                        ),
+                      ],
                     ),
                   ),
-                  padding: .symmetric(
-                    horizontal: UIConstants.gapSize.md,
-                    vertical: UIConstants.gapSize.md,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: .end,
-                    spacing: UIConstants.gapSize.md,
-                    children: [
-                      _ControlButton(
-                        icon: LucideIcons.rotate_cw,
-                        onTap: _rotate,
-                      ),
-                      _ControlButton(
-                        icon: LucideIcons.minimize,
-                        onTap: _exitFullscreen,
-                      ),
-                    ],
-                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

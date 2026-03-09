@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pig_counter/constants/color.dart';
+import 'package:pig_counter/utils/exit.dart';
 
 import 'home_body.dart';
 import 'home_tab.dart';
@@ -16,14 +17,20 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: ColorConstants.backgroundColor,
-        child: getHomeBody(currentIndex: _currentTabIndex),
-      ),
-      bottomNavigationBar: getHomeTabBar(
-        currentIndex: _currentTabIndex,
-        onTap: (value) => setState(() => _currentTabIndex = value),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) ExitUtil.handleBackPress();
+      },
+      child: Scaffold(
+        body: Container(
+          color: ColorConstants.backgroundColor,
+          child: getHomeBody(currentIndex: _currentTabIndex),
+        ),
+        bottomNavigationBar: getHomeTabBar(
+          currentIndex: _currentTabIndex,
+          onTap: (value) => setState(() => _currentTabIndex = value),
+        ),
       ),
     );
   }
