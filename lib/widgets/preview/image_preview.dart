@@ -5,12 +5,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:pig_counter/constants/ui.dart';
+import 'package:pig_counter/widgets/tips/tips.dart';
 
 class ImagePreview extends StatelessWidget {
   final String url;
   final bool isLocal;
+  final VoidCallback? onError;
 
-  const ImagePreview({super.key, required this.url, required this.isLocal});
+  const ImagePreview({
+    super.key,
+    required this.url,
+    required this.isLocal,
+    this.onError,
+  });
 
   void _enterFullscreen(BuildContext context) {
     Navigator.of(context).push(
@@ -22,16 +29,31 @@ class ImagePreview extends StatelessWidget {
     );
   }
 
+  Widget buildError() {
+    if (onError != null) Future.microtask(onError!);
+    return AppTips.icon(text: "加载失败", type: .error);
+  }
+
+  Widget buildContent() {
+    if (isLocal) {
+      return Image.file(
+        File(url),
+        fit: .cover,
+        errorBuilder: (_, _, _) => buildError(),
+      );
+    }
+    return Image.network(
+      url,
+      fit: .cover,
+      errorBuilder: (_, _, _) => buildError(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => _enterFullscreen(context),
-      child: AspectRatio(
-        aspectRatio: 3 / 2,
-        child: isLocal
-            ? Image.file(File(url), fit: .cover)
-            : Image.network(url, fit: .cover),
-      ),
+      child: AspectRatio(aspectRatio: 3 / 2, child: buildContent()),
     );
   }
 }

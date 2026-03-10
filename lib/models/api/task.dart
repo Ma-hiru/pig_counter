@@ -11,8 +11,8 @@ class Pen {
   String uploadPath;
   String outputPath;
   UploadType type;
-  String? localPath;
-  UploadType? localType;
+  String localPath;
+  UploadType localType;
 
   Pen({
     required this.id,
@@ -23,6 +23,8 @@ class Pen {
     required this.outputPath,
     required this.status,
     required this.type,
+    this.localPath = "",
+    this.localType = .none,
   });
 
   factory Pen.fromJSON(dynamic json) {
@@ -67,17 +69,17 @@ class Pen {
     UploadType? localType,
   }) {
     return Pen(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        aiCount: aiCount ?? this.aiCount,
-        manualCount: manualCount ?? this.manualCount,
-        uploadPath: uploadPath ?? this.uploadPath,
-        outputPath: outputPath ?? this.outputPath,
-        status: status ?? this.status,
-        type: type ?? this.type,
-      )
-      ..localPath = localPath ?? this.localPath
-      ..localType = localType ?? this.localType;
+      id: id ?? this.id,
+      name: name ?? this.name,
+      aiCount: aiCount ?? this.aiCount,
+      manualCount: manualCount ?? this.manualCount,
+      uploadPath: uploadPath ?? this.uploadPath,
+      outputPath: outputPath ?? this.outputPath,
+      status: status ?? this.status,
+      type: type ?? this.type,
+      localPath: localPath ?? this.localPath,
+      localType: localType ?? this.localType,
+    );
   }
 
   static UploadType parseUploadType(dynamic type) {
@@ -321,8 +323,18 @@ class Task extends BaseTask {
             Pen(
               id: Random(DateTime.now().microsecond).nextInt(1000),
               name: "Pen ${Random(DateTime.now().microsecond).nextInt(1000)}",
+              aiCount: 0,
+              manualCount: 0,
+              uploadPath: "/path/to/picture.jpg",
+              outputPath: "",
+              status: false,
+              type: UploadType.image,
+            ),
+            Pen(
+              id: Random(DateTime.now().microsecond).nextInt(1000),
+              name: "Pen ${Random(DateTime.now().microsecond).nextInt(1000)}",
               aiCount: 10,
-              manualCount: 10,
+              manualCount: 0,
               uploadPath: "/path/to/picture.jpg",
               outputPath: "/path/to/output.jpg",
               status: false,

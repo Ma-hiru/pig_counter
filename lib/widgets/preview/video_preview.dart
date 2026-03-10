@@ -6,8 +6,9 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/font.dart';
 import 'package:pig_counter/constants/ui.dart';
-import 'package:pig_counter/widgets/loading/loading.dart';
 import 'package:video_player/video_player.dart';
+
+import '../tips/tips.dart';
 
 class VideoPreview extends StatefulWidget {
   final String url;

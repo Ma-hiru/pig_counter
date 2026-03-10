@@ -32,7 +32,7 @@ class StatsTaskSelector extends StatelessWidget {
           horizontal: UIConstants.contentPaddingFromSides,
         ),
         itemCount: taskList.length,
-        separatorBuilder: (_, __) => SizedBox(width: UIConstants.gapSize.lg),
+        separatorBuilder: (_, _) => SizedBox(width: UIConstants.gapSize.lg),
         itemBuilder: (ctx, i) {
           final task = taskList[i];
           final selected = i == selectedIndex;

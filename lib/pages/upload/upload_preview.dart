@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/models/api/task.dart';
-import 'package:pig_counter/widgets/loading/loading.dart';
 
 import '../../widgets/preview/image_preview.dart';
 import '../../widgets/preview/video_preview.dart';
+import '../../widgets/tips/tips.dart';
 
 class UploadPreview extends StatelessWidget {
   final Pen pen;
@@ -23,14 +23,14 @@ class UploadPreview extends StatelessWidget {
   bool get isLocal {
     return pen.outputPath.isEmpty == true &&
         pen.uploadPath.isEmpty == true &&
-        pen.localPath?.isNotEmpty == true;
+        pen.localPath.isNotEmpty == true;
   }
 
   UploadType get displayType {
     if (pen.uploadPath.isNotEmpty || pen.outputPath.isNotEmpty) {
       return pen.type;
     }
-    return pen.localType ?? UploadType.none;
+    return pen.localType;
   }
 
   Widget get displayChild {

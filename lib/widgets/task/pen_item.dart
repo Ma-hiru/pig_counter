@@ -18,8 +18,11 @@ class PenItem extends StatelessWidget {
     this.onTap,
   });
 
-  Color get _statusColor =>
-      pen.status ? ColorConstants.successColor : Colors.grey.shade400;
+  Color get _statusColor => pen.status
+      ? ColorConstants.successColor
+      : (pen.uploadPath.isNotEmpty && pen.outputPath.isEmpty)
+      ? ColorConstants.themeColor
+      : Colors.grey.shade400;
 
   IconData get _statusIcon =>
       pen.status ? LucideIcons.circle_check : LucideIcons.circle_dashed;
@@ -73,11 +76,15 @@ class PenItem extends StatelessWidget {
                     borderRadius: .circular(UIConstants.borderRadius),
                   ),
                   child: Text(
-                    pen.status ? "${pen.aiCount} 头" : "未完成",
+                    pen.status
+                        ? "${pen.manualCount} 头"
+                        : (pen.uploadPath.isNotEmpty && pen.outputPath.isEmpty)
+                        ? "处理中"
+                        : "未完成",
                     style: TextStyle(
                       color: _statusColor,
                       fontFamily: FontConstants.fontFamily,
-                      fontSize: FontConstants.fontSize.xs ,
+                      fontSize: FontConstants.fontSize.xs,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

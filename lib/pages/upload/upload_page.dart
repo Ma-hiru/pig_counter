@@ -9,12 +9,13 @@ import 'package:pig_counter/models/routes/upload_route_param.dart';
 import 'package:pig_counter/pages/upload/upload_actions.dart';
 import 'package:pig_counter/pages/upload/upload_options.dart';
 import 'package:pig_counter/pages/upload/upload_preview.dart';
+import 'package:pig_counter/pages/upload/upload_result.dart';
 import 'package:pig_counter/utils/toast.dart';
-import 'package:pig_counter/widgets/loading/loading.dart';
 
 import '../../constants/ui.dart';
 import '../../stores/settings.dart';
 import '../../widgets/header/navigator_app_bar.dart';
+import '../../widgets/tips/tips.dart';
 
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});
@@ -61,9 +62,11 @@ class _UploadPageState extends State<UploadPage> {
   Widget buildContent() {
     if (latestData != null && uploadOptions != null) {
       return Column(
-        mainAxisAlignment: .spaceBetween,
         children: [
           UploadPreview(pen: latestData!.pen),
+          SizedBox(height: UIConstants.gapSize.md),
+          Expanded(child: UploadResult(pen: latestData!.pen)),
+          SizedBox(height: UIConstants.gapSize.md),
           UploadActions(
             pen: latestData!.pen,
             uploadOptions: uploadOptions!,
