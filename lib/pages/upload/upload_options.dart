@@ -25,6 +25,21 @@ class UploadOptions {
     return null;
   }
 
+  Future<String?> takeImage() async {
+    try {
+      final XFile? picked = await picker.pickImage(
+        source: .camera,
+        preferredCameraDevice: .rear,
+        imageQuality: settingsController.upload.value.uploadPenImageQuality,
+      );
+      if (picked != null) return picked.path;
+    } catch (err) {
+      if (kDebugMode) print("Failed to take image: $err");
+      Toast.showToast(.error(ErrMsgConstants.takeImageFailed));
+    }
+    return null;
+  }
+
   Future<String?> selectVideo() async {
     try {
       final XFile? picked = await picker.pickVideo(
@@ -36,6 +51,21 @@ class UploadOptions {
     } catch (err) {
       if (kDebugMode) print("Failed to pick video: $err");
       Toast.showToast(.error(ErrMsgConstants.selectVideoFailed));
+    }
+    return null;
+  }
+
+  Future<String?> takeVideo() async {
+    try {
+      final XFile? picked = await picker.pickVideo(
+        source: .camera,
+        preferredCameraDevice: .rear,
+        maxDuration: const Duration(minutes: 1),
+      );
+      if (picked != null) return picked.path;
+    } catch (err) {
+      if (kDebugMode) print("Failed to take video: $err");
+      Toast.showToast(.error(ErrMsgConstants.takeVideoFailed));
     }
     return null;
   }

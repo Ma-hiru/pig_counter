@@ -220,6 +220,7 @@ class VideoPreviewState extends State<VideoPreview> {
     });
     controller.setLooping(true);
     controller.addListener(_updatePage);
+    controller.setVolume(0);
   }
 
   @override

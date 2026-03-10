@@ -7,7 +7,7 @@ import 'package:pig_counter/widgets/button/button.dart';
 import '../models/ui/modal.dart';
 
 class AppModal {
-  static Widget buildIndicator() {
+  static Widget _buildIndicator() {
     return Center(
       child: Container(
         width: UIConstants.uiSize.xxl,
@@ -20,7 +20,7 @@ class AppModal {
     );
   }
 
-  static Widget buildTitle(String title) {
+  static Widget _buildTitle(String title) {
     return Text(
       title,
       style: TextStyle(
@@ -33,7 +33,7 @@ class AppModal {
     );
   }
 
-  static Widget buildDescription(String desc) {
+  static Widget _buildDescription(String desc) {
     return Text(
       desc,
       style: TextStyle(
@@ -44,7 +44,7 @@ class AppModal {
     );
   }
 
-  static Widget buildInput({
+  static Widget _buildInput({
     required ModalData data,
     required TextEditingController controller,
   }) {
@@ -97,7 +97,7 @@ class AppModal {
     );
   }
 
-  static List<Widget> buildButton({
+  static List<Widget> _buildButton({
     required BuildContext ctx,
     required ModalData data,
     required TextEditingController controller,
@@ -109,7 +109,10 @@ class AppModal {
       child: AppButton.normal(
         label: data.cancelText,
         color: data.cancelColor,
-        onPressed: () => Navigator.pop(ctx),
+        onPressed: () {
+          Navigator.pop(ctx);
+          data.onCancel?.call();
+        },
       ),
     );
     final confirm = SizedBox(
@@ -158,25 +161,25 @@ class AppModal {
             crossAxisAlignment: .start,
             children: [
               // 拖拽指示条
-              if (data.showIndicator == true) buildIndicator(),
+              if (data.showIndicator == true) _buildIndicator(),
               SizedBox(height: UIConstants.gapSize.xl),
               // 标题
-              buildTitle(data.title),
+              _buildTitle(data.title),
               // 描述
               if (data.description != null) ...[
                 SizedBox(height: UIConstants.gapSize.sm),
-                buildDescription(data.description!),
+                _buildDescription(data.description!),
               ],
               // 输入框
               if (data.hideInput != true) ...[
                 SizedBox(height: UIConstants.gapSize.xl),
-                buildInput(data: data, controller: controller),
+                _buildInput(data: data, controller: controller),
               ],
               SizedBox(height: UIConstants.gapSize.xl),
               // 按钮
               Row(
                 spacing: UIConstants.gapSize.lg,
-                children: buildButton(
+                children: _buildButton(
                   ctx: ctx,
                   data: data,
                   controller: controller,

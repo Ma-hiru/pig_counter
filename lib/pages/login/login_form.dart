@@ -155,7 +155,8 @@ class _LoginFormState extends State<LoginForm> {
       );
 
       if (!userProfile.ok) {
-        return Toast.showToast(.error(userProfile.message));
+        Toast.showToast(.error(userProfile.message));
+        return;
       }
 
       _userController.updateUserProfile(userProfile.data);

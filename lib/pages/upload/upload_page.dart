@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:pig_counter/pages/upload/upload_actions.dart';
 import 'package:pig_counter/pages/upload/upload_options.dart';
 import 'package:pig_counter/pages/upload/upload_preview.dart';
 import 'package:pig_counter/pages/upload/upload_result.dart';
+import 'package:pig_counter/utils/cache.dart';
 import 'package:pig_counter/utils/toast.dart';
 
 import '../../constants/ui.dart';
@@ -35,7 +38,22 @@ class _UploadPageState extends State<UploadPage> {
   }
 
   Future fetchLatestData() async {
-    if (kDebugMode) return setState(() => latestData = getRouteParam());
+    if (kDebugMode || Platform.isAndroid) {
+      latestData = getRouteParam();
+      final cache = await TaskCache.checkOne(
+        taskID: latestData!.task.id,
+        penID: latestData!.pen.id,
+      );
+      if (cache != null) {
+        latestData = latestData!.copyWith(
+          pen: latestData!.pen.copyWith(
+            localPath: cache.path,
+            localType: cache.type,
+          ),
+        );
+      }
+      return setState(() {});
+    }
     try {
       final routeParam = getRouteParam();
       final response = await API.Task.detail(routeParam.task.id);
@@ -45,6 +63,11 @@ class _UploadPageState extends State<UploadPage> {
         (b) => b.id == routeParam.building.id,
       );
       final pen = building.pens.firstWhere((p) => p.id == routeParam.pen.id);
+      final cache = await TaskCache.checkOne(taskID: task.id, penID: pen.id);
+      if (cache != null) {
+        pen.localPath = cache.path;
+        pen.localType = cache.type;
+      }
       setState(() {
         latestData = UploadRouteParam(task: task, building: building, pen: pen);
       });
@@ -63,12 +86,17 @@ class _UploadPageState extends State<UploadPage> {
     if (latestData != null && uploadOptions != null) {
       return Column(
         children: [
-          UploadPreview(pen: latestData!.pen),
+          Expanded(
+            child: SingleChildScrollView(
+              child: UploadPreview(pen: latestData!.pen),
+            ),
+          ),
           SizedBox(height: UIConstants.gapSize.md),
-          Expanded(child: UploadResult(pen: latestData!.pen)),
+          UploadResult(pen: latestData!.pen),
           SizedBox(height: UIConstants.gapSize.md),
           UploadActions(
             pen: latestData!.pen,
+            taskID: latestData!.task.id,
             uploadOptions: uploadOptions!,
             onChange: (pen) {
               setState(() {

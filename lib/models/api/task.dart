@@ -2,6 +2,30 @@ import 'dart:math';
 
 enum UploadType { none, image, video }
 
+extension UploadTypeExt on UploadType {
+  String get name {
+    switch (this) {
+      case UploadType.image:
+        return "image";
+      case UploadType.video:
+        return "video";
+      case UploadType.none:
+        return "none";
+    }
+  }
+
+  static UploadType fromName(String name) {
+    switch (name) {
+      case "image":
+        return UploadType.image;
+      case "video":
+        return UploadType.video;
+      default:
+        return UploadType.none;
+    }
+  }
+}
+
 class Pen {
   int id;
   int aiCount;
@@ -235,11 +259,11 @@ class Task extends BaseTask {
       valid: true,
       buildings: [
         Building(
-          id: Random(DateTime.now().microsecond).nextInt(1000),
+          id: Random(DateTime.now().microsecond).nextInt(1000) + 1,
           name: "Building A${Random(DateTime.now().microsecond).nextInt(1000)}",
           pens: [
             Pen(
-              id: Random(DateTime.now().microsecond).nextInt(1000),
+              id: Random(DateTime.now().microsecond).nextInt(1000) + 1,
               name: "Pen ${Random(DateTime.now().microsecond).nextInt(1000)}",
               aiCount: 10,
               manualCount: 10,
@@ -249,7 +273,7 @@ class Task extends BaseTask {
               type: UploadType.image,
             ),
             Pen(
-              id: Random(DateTime.now().microsecond).nextInt(1000),
+              id: Random(DateTime.now().microsecond).nextInt(1000) + 2,
               name: "Pen ${Random(DateTime.now().microsecond).nextInt(1000)}",
               aiCount: 10,
               manualCount: 10,
@@ -259,7 +283,7 @@ class Task extends BaseTask {
               type: UploadType.image,
             ),
             Pen(
-              id: Random(DateTime.now().microsecond).nextInt(1000),
+              id: Random(DateTime.now().microsecond).nextInt(1000) + 3,
               name: "Pen ${Random(DateTime.now().microsecond).nextInt(1000)}",
               aiCount: 0,
               manualCount: 0,
@@ -271,11 +295,11 @@ class Task extends BaseTask {
           ],
         ),
         Building(
-          id: Random(DateTime.now().microsecond).nextInt(1000),
+          id: Random(DateTime.now().microsecond).nextInt(1000) + 2,
           name: "Building A${Random(DateTime.now().microsecond).nextInt(1000)}",
           pens: [
             Pen(
-              id: Random(DateTime.now().microsecond).nextInt(1000),
+              id: Random(DateTime.now().microsecond).nextInt(1000) + 4,
               name: "Pen ${Random(DateTime.now().microsecond).nextInt(1000)}",
               aiCount: 10,
               manualCount: 10,
@@ -285,7 +309,7 @@ class Task extends BaseTask {
               type: UploadType.image,
             ),
             Pen(
-              id: Random(DateTime.now().microsecond).nextInt(1000),
+              id: Random(DateTime.now().microsecond).nextInt(1000) + 5,
               name: "Pen ${Random(DateTime.now().microsecond).nextInt(1000)}",
               aiCount: 10,
               manualCount: 10,
@@ -295,7 +319,7 @@ class Task extends BaseTask {
               type: UploadType.image,
             ),
             Pen(
-              id: Random(DateTime.now().microsecond).nextInt(1000),
+              id: Random(DateTime.now().microsecond).nextInt(1000) + 6,
               name: "Pen ${Random(DateTime.now().microsecond).nextInt(1000)}",
               aiCount: 0,
               manualCount: 0,
@@ -307,11 +331,11 @@ class Task extends BaseTask {
           ],
         ),
         Building(
-          id: Random(DateTime.now().microsecond).nextInt(1000),
+          id: Random(DateTime.now().microsecond).nextInt(1000) + 3,
           name: "Building A${Random(DateTime.now().microsecond).nextInt(1000)}",
           pens: [
             Pen(
-              id: Random(DateTime.now().microsecond).nextInt(1000),
+              id: Random(DateTime.now().microsecond).nextInt(1000) + 7,
               name: "Pen ${Random(DateTime.now().microsecond).nextInt(1000)}",
               aiCount: 10,
               manualCount: 10,
@@ -321,7 +345,7 @@ class Task extends BaseTask {
               type: UploadType.image,
             ),
             Pen(
-              id: Random(DateTime.now().microsecond).nextInt(1000),
+              id: Random(DateTime.now().microsecond).nextInt(1000) + 8,
               name: "Pen ${Random(DateTime.now().microsecond).nextInt(1000)}",
               aiCount: 0,
               manualCount: 0,
@@ -331,7 +355,7 @@ class Task extends BaseTask {
               type: UploadType.image,
             ),
             Pen(
-              id: Random(DateTime.now().microsecond).nextInt(1000),
+              id: Random(DateTime.now().microsecond).nextInt(1000) + 9,
               name: "Pen ${Random(DateTime.now().microsecond).nextInt(1000)}",
               aiCount: 10,
               manualCount: 0,
@@ -341,7 +365,7 @@ class Task extends BaseTask {
               type: UploadType.image,
             ),
             Pen(
-              id: Random(DateTime.now().microsecond).nextInt(1000),
+              id: Random(DateTime.now().microsecond).nextInt(1000) + 10,
               name: "Pen ${Random(DateTime.now().microsecond).nextInt(1000)}",
               aiCount: 0,
               manualCount: 0,

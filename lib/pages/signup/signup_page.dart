@@ -57,7 +57,8 @@ class _SignupPageState extends State<SignupPage> {
       );
 
       if (!signupResult.ok) {
-        return Toast.showToast(.error(signupResult.message));
+        Toast.showToast(.error(signupResult.message));
+        return;
       }
 
       if (mounted) {

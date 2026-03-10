@@ -1,34 +1,75 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/models/api/task.dart';
 import 'package:pig_counter/pages/upload/upload_options.dart';
+import 'package:pig_counter/utils/cache.dart';
 import 'package:pig_counter/utils/modal.dart';
+import 'package:pig_counter/utils/toast.dart';
 import 'package:pig_counter/widgets/button/button.dart';
 
 class UploadActions extends StatelessWidget {
   final Pen pen;
+  final int taskID;
   final UploadOptions uploadOptions;
   final void Function(Pen) onChange;
 
   const UploadActions({
     super.key,
     required this.pen,
+    required this.taskID,
     required this.onChange,
     required this.uploadOptions,
   });
 
-  void selectImage() async {
-    final image = await uploadOptions.selectImage();
-    if (image is String) {
-      onChange(pen.copyWith(localPath: image, localType: .image));
-    }
+  void selectImage(BuildContext context) {
+    AppModal.show(
+      context,
+      .select(
+        title: "选择图片",
+        leftText: "图库",
+        rightText: "拍摄",
+        onSelectLeft: () async {
+          cancelOption(context);
+          final image = await uploadOptions.selectImage();
+          if (image is String) {
+            onChange(pen.copyWith(localPath: image, localType: .image));
+          }
+        },
+        onSelectRight: () async {
+          cancelOption(context);
+          final image = await uploadOptions.takeImage();
+          if (image is String) {
+            onChange(pen.copyWith(localPath: image, localType: .image));
+          }
+        },
+      ),
+    );
   }
 
-  void selectVideo() async {
-    final video = await uploadOptions.selectVideo();
-    if (video is String) {
-      onChange(pen.copyWith(localPath: video, localType: .video));
-    }
+  void selectVideo(BuildContext context) {
+    AppModal.show(
+      context,
+      .select(
+        title: "选择视频",
+        leftText: "图库",
+        rightText: "拍摄",
+        onSelectLeft: () async {
+          cancelOption(context);
+          final video = await uploadOptions.selectVideo();
+          if (video is String) {
+            onChange(pen.copyWith(localPath: video, localType: .video));
+          }
+        },
+        onSelectRight: () async {
+          cancelOption(context);
+          final video = await uploadOptions.takeVideo();
+          if (video is String) {
+            onChange(pen.copyWith(localPath: video, localType: .video));
+          }
+        },
+      ),
+    );
   }
 
   Future confirmResult(BuildContext context) async {
@@ -57,7 +98,25 @@ class UploadActions extends StatelessWidget {
 
   Future confirmUpload() async {
     // todo use api
-    
+
+    // finally remove temp cache
+    TaskCache.remove(taskID: taskID, penID: pen.id).catchError((_) {});
+  }
+
+  void saveTemp() {
+    TaskCache.save(
+          taskID: taskID,
+          penID: pen.id,
+          path: pen.localPath,
+          type: pen.localType,
+        )
+        .then((_) {
+          Toast.showToast(.success("保存成功"));
+        })
+        .catchError((err) {
+          if (kDebugMode) print("Failed to save temp file: $err");
+          Toast.showToast(.error("保存失败"));
+        });
   }
 
   void cancelOption(BuildContext context) {
@@ -75,6 +134,7 @@ class UploadActions extends StatelessWidget {
     }
     // 未上传但已选择
     if (pen.localPath.isNotEmpty == true) {
+      TaskCache.remove(taskID: taskID, penID: pen.id);
       onChange(pen.copyWith(localPath: "", localType: .none));
     }
   }
@@ -108,13 +168,22 @@ class UploadActions extends StatelessWidget {
           filled: true,
           onPressed: () => confirmUpload(),
         ),
+        AppButton.normal(label: "暂存", filled: true, onPressed: saveTemp),
         AppButton.normal(label: "取消", onPressed: () => cancelOption(context)),
       ];
     }
     // 未选择
     return [
-      AppButton.normal(label: "图片", filled: true, onPressed: selectImage),
-      AppButton.normal(label: "视频", filled: true, onPressed: selectVideo),
+      AppButton.normal(
+        label: "图片",
+        filled: true,
+        onPressed: () => selectImage(context),
+      ),
+      AppButton.normal(
+        label: "视频",
+        filled: true,
+        onPressed: () => selectVideo(context),
+      ),
     ];
   }
 

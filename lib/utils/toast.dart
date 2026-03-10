@@ -6,9 +6,9 @@ import 'package:pig_counter/constants/ui.dart';
 import '../models/ui/toast.dart';
 
 class Toast {
-  static void showToast(ToastData data) async {
-    if (data.message.isEmpty) return;
-    showToastWidget(
+  static Future<ToastFuture?> showToast(ToastData data) async {
+    if (data.message.isEmpty) return null;
+    return showToastWidget(
       Toast._getContentWidget(data),
       duration: data.duration,
       animationDuration: const Duration(milliseconds: 300),

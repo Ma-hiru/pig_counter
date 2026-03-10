@@ -13,7 +13,8 @@ class ModalData {
   final bool? hideInput;
   final bool? showIndicator;
   final String? Function(String?)? validator;
-  final void Function(String value)? onConfirm;
+  final Function(String value)? onConfirm;
+  final VoidCallback? onCancel;
 
   const ModalData({
     required this.title,
@@ -29,6 +30,7 @@ class ModalData {
     this.showIndicator,
     this.cancelColor,
     this.confirmColor,
+    this.onCancel,
   });
 
   factory ModalData.input({
@@ -84,6 +86,32 @@ class ModalData {
       showIndicator: showIndicator,
       confirmColor: confirmColor,
       cancelColor: cancelColor,
+    );
+  }
+
+  factory ModalData.select({
+    required String title,
+    required String leftText,
+    required String rightText,
+    bool showIndicator = false,
+    bool centerTitle = false,
+    String? description,
+    Color? rightColor,
+    Color? leftColor,
+    VoidCallback? onSelectRight,
+    VoidCallback? onSelectLeft,
+  }) {
+    return ModalData(
+      title: title,
+      description: description,
+      cancelText: leftText,
+      confirmText: rightText,
+      onCancel: () => onSelectLeft?.call(),
+      onConfirm: (_) => onSelectRight?.call(),
+      hideInput: true,
+      showIndicator: showIndicator,
+      confirmColor: rightColor,
+      cancelColor: leftColor,
     );
   }
 }
