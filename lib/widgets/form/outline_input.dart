@@ -5,8 +5,6 @@ import '../../constants/color.dart';
 import '../../constants/font.dart';
 import '../../constants/ui.dart';
 
-/// 圆角描边风格输入框，支持内置密码可见切换。
-/// 登录页使用原 [FormInput]（下划线风格），注册页使用此组件。
 class OutlineFormInput extends StatefulWidget {
   final String hitText;
   final bool obscureText;

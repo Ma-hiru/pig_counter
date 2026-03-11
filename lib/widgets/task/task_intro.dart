@@ -9,8 +9,15 @@ import 'package:pig_counter/widgets/task/task_intro_info.dart';
 
 class TaskIntro extends StatefulWidget {
   final Task taskData;
+  final VoidCallback? onTap;
+  final bool? disableDetail;
 
-  const TaskIntro({super.key, required this.taskData});
+  const TaskIntro({
+    super.key,
+    required this.taskData,
+    this.onTap,
+    this.disableDetail,
+  });
 
   @override
   State<TaskIntro> createState() => _TaskIntroState();
@@ -44,19 +51,27 @@ class _TaskIntroState extends State<TaskIntro> {
           mainAxisAlignment: .start,
           crossAxisAlignment: .start,
           children: [
-            TaskIntroHeader(taskData: widget.taskData),
+            GestureDetector(
+              onTap: widget.onTap,
+              child: TaskIntroHeader(taskData: widget.taskData),
+            ),
             Divider(
               height: UIConstants.gapSize.lg,
               thickness: 1,
               color: Colors.grey[300],
             ),
-            TaskIntroInfo(taskData: widget.taskData),
-            Divider(
-              height: UIConstants.gapSize.lg,
-              thickness: 1,
-              color: Colors.grey[300],
+            GestureDetector(
+              onTap: widget.onTap,
+              child: TaskIntroInfo(taskData: widget.taskData),
             ),
-            TaskIntroDetail(taskData: widget.taskData, onTap: onTapDetailPen),
+            if (widget.disableDetail != true)
+              Divider(
+                height: UIConstants.gapSize.lg,
+                thickness: 1,
+                color: Colors.grey[300],
+              ),
+            if (widget.disableDetail != true)
+              TaskIntroDetail(taskData: widget.taskData, onTap: onTapDetailPen),
           ],
         ),
       ),

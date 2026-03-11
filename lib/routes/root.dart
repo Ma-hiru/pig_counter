@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:pig_counter/pages/history/history_page.dart';
+import 'package:pig_counter/pages/stats/stats_page.dart';
 import 'package:pig_counter/pages/upload/upload_page.dart';
 
 import '../constants/routes.dart';
@@ -18,6 +20,8 @@ Widget getRootWidget() {
         RoutesPathConstants.signup: (ctx) => const SignupPage(),
         RoutesPathConstants.settings: (ctx) => const SettingsPage(),
         RoutesPathConstants.upload: (ctx) => const UploadPage(),
+        RoutesPathConstants.history: (ctx) => const HistoryPage(),
+        RoutesPathConstants.stats: (ctx) => const StatsPage(),
       },
     ),
   );

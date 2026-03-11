@@ -10,6 +10,7 @@ import '../../../widgets/stats/stats_overview.dart';
 import '../../../widgets/stats/stats_pen_table.dart';
 import '../../../widgets/stats/stats_task_meta.dart';
 import '../../../widgets/stats/stats_task_selector.dart';
+import '../../../widgets/tips/tips.dart';
 
 class StatsView extends StatefulWidget {
   const StatsView({super.key});
@@ -19,6 +20,7 @@ class StatsView extends StatefulWidget {
 }
 
 class _StatsViewState extends State<StatsView> {
+  final indicatorKey = GlobalKey<RefreshIndicatorState>();
   List<Task> _taskList = [];
   int _selectedIndex = 0;
 
@@ -35,6 +37,20 @@ class _StatsViewState extends State<StatsView> {
   void initState() {
     super.initState();
     _refresh();
+  }
+
+  Widget _buildBlank() {
+    return Column(
+      children: [
+        HomeSliverBar(title: "任务统计", subTitle: "", disableSliver: true),
+        Expanded(
+          child: GestureDetector(
+            onTap: () => indicatorKey.currentState?.show(),
+            child: AppTips.icon(text: "暂无数据，点击刷新", type: .refresh),
+          ),
+        ),
+      ],
+    );
   }
 
   List<Widget> _buildSlivers() {
@@ -69,9 +85,7 @@ class _StatsViewState extends State<StatsView> {
         child: SizedBox(height: UIConstants.contentPaddingFromSides),
       ),
       SliverPadding(
-        padding: EdgeInsets.symmetric(
-          horizontal: UIConstants.contentPaddingFromSides,
-        ),
+        padding: .symmetric(horizontal: UIConstants.contentPaddingFromSides),
         sliver: SliverList.list(
           children: [
             StatsTaskMeta(taskData: task),
@@ -91,16 +105,24 @@ class _StatsViewState extends State<StatsView> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
+      key: indicatorKey,
       onRefresh: _refresh,
       color: ColorConstants.themeColor,
       backgroundColor: Colors.white,
-      child: CustomScrollView(
-        slivers: [
-          HomeSliverBar(title: "任务统计", subTitle: "共 ${_taskList.length} 个任务"),
-          SliverToBoxAdapter(child: SizedBox(height: UIConstants.gapSize.lg)),
-          ..._buildSlivers(),
-        ],
-      ),
+      child: _taskList.isNotEmpty
+          ? CustomScrollView(
+              slivers: [
+                HomeSliverBar(
+                  title: "任务统计",
+                  subTitle: "共 ${_taskList.length} 个任务",
+                ),
+                SliverToBoxAdapter(
+                  child: SizedBox(height: UIConstants.gapSize.lg),
+                ),
+                ..._buildSlivers(),
+              ],
+            )
+          : _buildBlank(),
     );
   }
 }

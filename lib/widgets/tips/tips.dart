@@ -8,22 +8,30 @@ import 'package:pig_counter/constants/ui.dart';
 
 import 'loading_icon.dart';
 
-enum AppTipsType { blank, loading, noNetwork, error }
+enum AppTipsType { blank, loading, noNetwork, error, refresh }
 
 class AppTips {
   static double get defaultIconSize => UIConstants.uiSize.xxl;
 
   static Widget _buildIcon(AppTipsType type, double? size) {
+    final IconData icon;
     switch (type) {
       case .noNetwork:
-        return Icon(LucideIcons.wifi_off, size: size ?? defaultIconSize);
+        icon = LucideIcons.wifi_off;
+        break;
       case .blank:
-        return Icon(LucideIcons.eye_off, size: size ?? defaultIconSize);
+        icon = LucideIcons.eye_off;
+        break;
+      case .error:
+        icon = LucideIcons.circle_alert;
+        break;
+      case .refresh:
+        icon = LucideIcons.refresh_ccw;
+        break;
       case .loading:
         return LoadingIcon(size: size ?? defaultIconSize);
-      case .error:
-        return Icon(LucideIcons.circle_alert, size: size ?? defaultIconSize);
     }
+    return Icon(icon, size: size ?? defaultIconSize);
   }
 
   static Widget _buildText(String text) {

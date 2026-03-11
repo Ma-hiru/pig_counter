@@ -38,102 +38,103 @@ class _DashboardViewState extends State<DashboardView> {
     );
   }
 
+  Widget buildProfileCard() {
+    return DashboardProfileCard(
+      profile: _userController.profile.value,
+      isLoggedIn: _userController.isLoggedIn.value,
+    );
+  }
+
+  List<Widget> buildItems() {
+    return [
+      DashboardMenuSection(
+        title: "账户",
+        items: [
+          DashboardMenuSectionItem(
+            icon: LucideIcons.user_round_pen,
+            iconColor: ColorConstants.themeColor,
+            label: "编辑资料",
+            subtitle: "修改姓名、组织等信息",
+            onTap: () {},
+          ),
+          DashboardMenuSectionItem(
+            icon: LucideIcons.lock_keyhole,
+            iconColor: const Color(0xFF7B5EA7),
+            label: "修改密码",
+            onTap: () {},
+          ),
+        ],
+      ),
+      SizedBox(height: UIConstants.gapSize.xl),
+      DashboardMenuSection(
+        title: "功能",
+        items: [
+          DashboardMenuSectionItem(
+            icon: LucideIcons.history,
+            iconColor: const Color(0xFF2196F3),
+            label: "历史任务",
+            subtitle: "查看已归档的任务",
+            onTap: () {
+              Navigator.pushNamed(context, RoutesPathConstants.history);
+            },
+          ),
+          DashboardMenuSectionItem(
+            icon: LucideIcons.chart_bar,
+            iconColor: const Color(0xFFFF7043),
+            label: "数据导出",
+            subtitle: "将识别结果导出为表格",
+            onTap: () {},
+          ),
+        ],
+      ),
+      SizedBox(height: UIConstants.gapSize.xl),
+      Obx(
+        () => DashboardMenuSection(
+          title: "系统",
+          items: [
+            DashboardMenuSectionItem(
+              icon: LucideIcons.settings,
+              iconColor: Colors.grey.shade600,
+              label: "设置",
+              onTap: () {
+                Navigator.pushNamed(context, RoutesPathConstants.settings);
+              },
+            ),
+            DashboardMenuSectionItem(
+              icon: LucideIcons.info,
+              iconColor: Colors.grey.shade600,
+              label: "关于",
+              subtitle: "版本信息与帮助文档",
+              onTap: () {},
+            ),
+            if (_userController.isLoggedIn.value)
+              DashboardMenuSectionItem(
+                icon: LucideIcons.log_out,
+                iconColor: ColorConstants.errorColor,
+                label: "退出登录",
+                flat: true,
+                onTap: _logout,
+              ),
+          ],
+        ),
+      ),
+      SizedBox(height: UIConstants.gapSize.xxxl),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: .light,
       child: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: Obx(
-              () => DashboardProfileCard(
-                profile: _userController.profile.value,
-                isLoggedIn: _userController.isLoggedIn.value,
-              ),
-            ),
-          ),
+          SliverToBoxAdapter(child: Obx(() => buildProfileCard())),
           SliverToBoxAdapter(child: SizedBox(height: UIConstants.gapSize.xl)),
           SliverPadding(
             padding: const .symmetric(
               horizontal: UIConstants.contentPaddingFromSides,
             ),
-            sliver: SliverList.list(
-              children: [
-                DashboardMenuSection(
-                  title: "账户",
-                  items: [
-                    DashboardMenuSectionItem(
-                      icon: LucideIcons.user_round_pen,
-                      iconColor: ColorConstants.themeColor,
-                      label: "编辑资料",
-                      subtitle: "修改姓名、组织等信息",
-                      onTap: () {},
-                    ),
-                    DashboardMenuSectionItem(
-                      icon: LucideIcons.lock_keyhole,
-                      iconColor: const Color(0xFF7B5EA7),
-                      label: "修改密码",
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-                SizedBox(height: UIConstants.gapSize.xl),
-                DashboardMenuSection(
-                  title: "功能",
-                  items: [
-                    DashboardMenuSectionItem(
-                      icon: LucideIcons.history,
-                      iconColor: const Color(0xFF2196F3),
-                      label: "历史任务",
-                      subtitle: "查看已归档的任务",
-                      onTap: () {},
-                    ),
-                    DashboardMenuSectionItem(
-                      icon: LucideIcons.chart_bar,
-                      iconColor: const Color(0xFFFF7043),
-                      label: "数据导出",
-                      subtitle: "将识别结果导出为表格",
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-                SizedBox(height: UIConstants.gapSize.xl),
-                Obx(
-                  () => DashboardMenuSection(
-                    title: "系统",
-                    items: [
-                      DashboardMenuSectionItem(
-                        icon: LucideIcons.settings,
-                        iconColor: Colors.grey.shade600,
-                        label: "设置",
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            RoutesPathConstants.settings,
-                          );
-                        },
-                      ),
-                      DashboardMenuSectionItem(
-                        icon: LucideIcons.info,
-                        iconColor: Colors.grey.shade600,
-                        label: "关于",
-                        subtitle: "版本信息与帮助文档",
-                        onTap: () {},
-                      ),
-                      if (_userController.isLoggedIn.value)
-                        DashboardMenuSectionItem(
-                          icon: LucideIcons.log_out,
-                          iconColor: ColorConstants.errorColor,
-                          label: "退出登录",
-                          flat: true,
-                          onTap: _logout,
-                        ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: UIConstants.gapSize.xxxl),
-              ],
-            ),
+            sliver: SliverList.list(children: buildItems()),
           ),
         ],
       ),
