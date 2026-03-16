@@ -51,7 +51,7 @@ class BuildingItemTitleRow extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       child: Icon(
         LucideIcons.chevron_down,
-        size: UIConstants.uiSize.sm + 4,
+        size: UIConstants.uiSize.md,
         color: Colors.grey.shade400,
       ),
     );
@@ -59,7 +59,7 @@ class BuildingItemTitleRow extends StatelessWidget {
 
   Widget buildTitleRowText() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         Text(
           building.name,

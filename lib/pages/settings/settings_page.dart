@@ -21,11 +21,16 @@ class _SettingsPageState extends State<SettingsPage> {
   late final SettingsActions _settingsActions;
 
   @override
-  Widget build(BuildContext context) {
+  initState(){
+    super.initState();
     _settingsActions = SettingsActions(
       context: context,
       settingsController: _settingsController,
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: NavigatorAppbar(title: "设置"),
       body: Container(

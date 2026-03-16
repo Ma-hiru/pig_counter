@@ -92,12 +92,17 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: NavigatorAppbar(title: "历史"),
-      body: RefreshIndicator(
-        key: indicatorKey,
-        onRefresh: refreshTaskData,
-        color: ColorConstants.themeColor,
-        backgroundColor: Colors.white,
-        child: _taskList.isNotEmpty ? buildContent() : buildBlank(),
+      body: Container(
+        width: .infinity,
+        height: .infinity,
+        color: ColorConstants.backgroundColor,
+        child: RefreshIndicator(
+          key: indicatorKey,
+          onRefresh: refreshTaskData,
+          color: ColorConstants.themeColor,
+          backgroundColor: Colors.white,
+          child: _taskList.isNotEmpty ? buildContent() : buildBlank(),
+        ),
       ),
     );
   }

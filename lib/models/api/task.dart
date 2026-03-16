@@ -133,6 +133,10 @@ class Building {
 
   bool get completed => completedPenCount == totalPens && totalPens > 0;
 
+  int get aiCount => pens.fold(0, (s, p) => s + p.aiCount);
+
+  int get manualCount => pens.fold(0, (s, p) => s + p.manualCount);
+
   factory Building.fromJSON(dynamic json) {
     if (json is! Map<String, dynamic>) {
       throw FormatException("Invalid JSON format for Building");
@@ -230,7 +234,19 @@ class Task extends BaseTask {
 
   bool get completed => progress >= 100;
 
+  int get completedPens => buildings.fold(
+    0,
+    (sum, building) => sum + building.pens.where((pen) => pen.status).length,
+  );
+
   bool get outdate => DateTime.now().isAfter(endTimeObject);
+
+  int get aiCount => buildings.fold(0, (s, b) => s + b.aiCount);
+
+  int get manualCount => buildings.fold(
+    0,
+    (s, b) => s + b.pens.fold(0, (ps, p) => ps + p.manualCount),
+  );
 
   factory Task.fromJSON(dynamic json) {
     if (json is! Map<String, dynamic>) {

@@ -39,30 +39,33 @@ class _BuildingProgressCard extends StatelessWidget {
         : ColorConstants.themeColor;
 
     return Container(
-      margin: EdgeInsets.only(bottom: UIConstants.gapSize.lg),
-      padding: EdgeInsets.all(UIConstants.gapSize.lg),
+      margin: .only(bottom: UIConstants.gapSize.sm),
+      padding: .all(UIConstants.gapSize.lg),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(UIConstants.borderRadius),
-        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: .circular(UIConstants.borderRadius),
+        border: .all(color: Colors.grey.shade200),
       ),
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: .spaceBetween,
             children: [
               Text(
                 building.name,
                 style: TextStyle(
-                  fontSize: FontConstants.fontSize.sm,
-                  fontWeight: FontWeight.w600,
+                  fontSize: FontConstants.fontSize.xs + 1,
+                  fontFamily: FontConstants.fontFamily,
+                  fontWeight: FontWeight.w700,
                   color: ColorConstants.defaultTextColor,
                 ),
               ),
               Text(
                 "$done / $total 栏",
                 style: TextStyle(
+                  fontFamily: FontConstants.fontFamily,
                   fontSize: FontConstants.fontSize.xs,
+                  fontWeight: .w500,
                   color: ColorConstants.secondaryTextColor,
                 ),
               ),
@@ -70,34 +73,35 @@ class _BuildingProgressCard extends StatelessWidget {
           ),
           SizedBox(height: UIConstants.gapSize.lg),
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: .circular(4),
             child: LinearProgressIndicator(
               value: ratio,
-              minHeight: 8,
+              minHeight: UIConstants.uiSize.xs,
               backgroundColor: Colors.grey.shade100,
               color: barColor,
             ),
           ),
           SizedBox(height: UIConstants.gapSize.md),
           Row(
+            spacing: UIConstants.gapSize.md,
             children: [
               _MiniTag(
                 label:
                     "AI: ${building.pens.fold(0, (s, p) => s + p.aiCount)} 头",
-                color: const Color(0xFF2196F3),
+                color: barColor,
               ),
-              SizedBox(width: UIConstants.gapSize.md),
               _MiniTag(
                 label:
                     "人工: ${building.pens.fold(0, (s, p) => s + p.manualCount)} 头",
-                color: const Color(0xFFFF7043),
+                color: barColor,
               ),
               const Spacer(),
               Text(
                 "${(ratio * 100).toStringAsFixed(0)}%",
                 style: TextStyle(
-                  fontSize: FontConstants.fontSize.sm,
+                  fontSize: FontConstants.fontSize.xs + 1,
                   fontWeight: FontWeight.w700,
+                  fontFamily: FontConstants.fontFamily,
                   color: barColor,
                 ),
               ),
@@ -129,6 +133,7 @@ class _MiniTag extends StatelessWidget {
           fontSize: 10,
           color: color,
           fontWeight: FontWeight.w500,
+          fontFamily: FontConstants.fontFamily,
         ),
       ),
     );

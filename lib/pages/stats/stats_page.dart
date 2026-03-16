@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/models/routes/stats_route_param.dart';
 
 import '../../constants/ui.dart';
@@ -23,28 +24,24 @@ class _StatsPageState extends State<StatsPage> {
 
   Widget buildContent() {
     final routeParam = getRouteParam();
+    final gap = SizedBox(height: UIConstants.gapSize.xl);
+    Widget getItem(Widget child) {
+      return Padding(
+        padding: .symmetric(horizontal: UIConstants.contentPaddingFromSides),
+        child: child,
+      );
+    }
+
     return ListView(
       children: [
-        Padding(
-          padding: .symmetric(horizontal: UIConstants.contentPaddingFromSides),
-          child: StatsTaskMeta(taskData: routeParam.task),
-        ),
-        SizedBox(height: UIConstants.gapSize.xl),
-        Padding(
-          padding: .symmetric(horizontal: UIConstants.contentPaddingFromSides),
-          child: StatsOverview(taskData: routeParam.task),
-        ),
-        SizedBox(height: UIConstants.gapSize.xl),
-        Padding(
-          padding: .symmetric(horizontal: UIConstants.contentPaddingFromSides),
-          child: StatsBuildingProgress(taskData: routeParam.task),
-        ),
-        SizedBox(height: UIConstants.gapSize.xl),
-        Padding(
-          padding: .symmetric(horizontal: UIConstants.contentPaddingFromSides),
-          child: StatsPenTable(taskData: routeParam.task),
-        ),
-        SizedBox(height: UIConstants.gapSize.xxxl),
+        getItem(StatsTaskMeta(taskData: routeParam.task)),
+        gap,
+        getItem(StatsOverview(taskData: routeParam.task)),
+        gap,
+        getItem(StatsBuildingProgress(taskData: routeParam.task)),
+        gap,
+        getItem(StatsPenTable(taskData: routeParam.task)),
+        gap,
       ],
     );
   }
@@ -54,7 +51,10 @@ class _StatsPageState extends State<StatsPage> {
     final routeParam = getRouteParam();
     return Scaffold(
       appBar: NavigatorAppbar(title: "详细 ${routeParam.task.name}"),
-      body: Padding(
+      body: Container(
+        width: .infinity,
+        height: .infinity,
+        color: ColorConstants.backgroundColor,
         padding: .only(top: UIConstants.gapSize.md),
         child: buildContent(),
       ),

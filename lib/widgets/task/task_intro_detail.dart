@@ -30,7 +30,7 @@ class _TaskIntroDetailState extends State<TaskIntroDetail> {
           onTap: () => setState(() => _expanded = !_expanded),
           behavior: HitTestBehavior.opaque,
           child: Row(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: .min,
             children: [
               AnimatedRotation(
                 turns: _expanded ? 0.5 : 0,
@@ -38,7 +38,7 @@ class _TaskIntroDetailState extends State<TaskIntroDetail> {
                 curve: Curves.easeInOut,
                 child: Icon(
                   LucideIcons.chevron_down,
-                  size: UIConstants.uiSize.md,
+                  size: FontConstants.fontSize.sm + 1,
                   color: ColorConstants.defaultTextColor.withAlpha(150),
                 ),
               ),
@@ -46,7 +46,8 @@ class _TaskIntroDetailState extends State<TaskIntroDetail> {
               Text(
                 _expanded ? "收起详情" : "查看详情",
                 style: TextStyle(
-                  fontSize: FontConstants.fontSize.sm,
+                  fontFamily: FontConstants.fontFamily,
+                  fontSize: FontConstants.fontSize.sm + 1,
                   color: ColorConstants.defaultTextColor.withAlpha(150),
                 ),
               ),

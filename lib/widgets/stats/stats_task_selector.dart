@@ -25,14 +25,12 @@ class StatsTaskSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 42,
+      height: UIConstants.uiSize.xl,
       child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(
-          horizontal: UIConstants.contentPaddingFromSides,
-        ),
+        scrollDirection: .horizontal,
+        padding: .symmetric(horizontal: UIConstants.contentPaddingFromSides),
         itemCount: taskList.length,
-        separatorBuilder: (_, _) => SizedBox(width: UIConstants.gapSize.lg),
+        separatorBuilder: (_, _) => SizedBox(width: UIConstants.gapSize.md),
         itemBuilder: (ctx, i) {
           final task = taskList[i];
           final selected = i == selectedIndex;
@@ -40,20 +38,17 @@ class StatsTaskSelector extends StatelessWidget {
           return GestureDetector(
             onTap: () => onSelect(i),
             child: AnimatedContainer(
+              alignment: .centerLeft,
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
-              padding: EdgeInsets.symmetric(
+              padding: .symmetric(
                 horizontal: UIConstants.gapSize.xl,
                 vertical: UIConstants.gapSize.md,
               ),
               decoration: BoxDecoration(
                 color: selected ? accent : Colors.white,
-                borderRadius: BorderRadius.circular(
-                  UIConstants.borderRadius * 3,
-                ),
-                border: Border.all(
-                  color: selected ? accent : Colors.grey.shade300,
-                ),
+                borderRadius: .circular(UIConstants.borderRadius * 3),
+                border: .all(color: selected ? accent : Colors.grey.shade300),
                 boxShadow: selected
                     ? [
                         BoxShadow(
@@ -67,8 +62,9 @@ class StatsTaskSelector extends StatelessWidget {
               child: Text(
                 task.name,
                 style: TextStyle(
+                  fontFamily: FontConstants.fontFamily,
                   fontSize: FontConstants.fontSize.sm,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.normal,
                   color: selected
                       ? Colors.white
                       : ColorConstants.secondaryTextColor,

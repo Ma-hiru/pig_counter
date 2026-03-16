@@ -13,21 +13,8 @@ class StatsOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int aiTotal = taskData.buildings.fold(
-      0,
-      (s, b) => s + b.pens.fold(0, (ps, p) => ps + p.aiCount),
-    );
-    final int manualTotal = taskData.buildings.fold(
-      0,
-      (s, b) => s + b.pens.fold(0, (ps, p) => ps + p.manualCount),
-    );
-    final int completedPens = taskData.buildings.fold(
-      0,
-      (s, b) => s + b.pens.where((p) => p.status).length,
-    );
-
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         const StatsSectionTitle(
           title: "概览",
@@ -38,9 +25,9 @@ class StatsOverview extends StatelessWidget {
           crossAxisCount: 3,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: UIConstants.gapSize.lg,
-          mainAxisSpacing: UIConstants.gapSize.lg,
-          childAspectRatio: 0.85,
+          crossAxisSpacing: UIConstants.gapSize.md,
+          mainAxisSpacing: UIConstants.gapSize.md,
+          childAspectRatio: 1,
           children: [
             _StatCard(
               icon: LucideIcons.layout_grid,
@@ -59,7 +46,7 @@ class StatsOverview extends StatelessWidget {
             _StatCard(
               icon: LucideIcons.circle_check_big,
               label: "已完成",
-              value: completedPens.toString(),
+              value: taskData.completedPens.toString(),
               unit: "栏",
               color: ColorConstants.successColor,
             ),
@@ -75,14 +62,14 @@ class StatsOverview extends StatelessWidget {
             _StatCard(
               icon: LucideIcons.cpu,
               label: "AI 识别",
-              value: aiTotal.toString(),
+              value: taskData.aiCount.toString(),
               unit: "头",
               color: const Color(0xFF2196F3),
             ),
             _StatCard(
               icon: LucideIcons.user_round_check,
               label: "人工确认",
-              value: manualTotal.toString(),
+              value: taskData.manualCount.toString(),
               unit: "头",
               color: const Color(0xFFFF7043),
             ),
@@ -111,48 +98,49 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(UIConstants.gapSize.md),
+      padding: .all(UIConstants.gapSize.sm),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(UIConstants.borderRadius),
-        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: .circular(UIConstants.borderRadius),
+        border: .all(color: Colors.grey.shade200),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: .spaceBetween,
+        crossAxisAlignment: .start,
         children: [
           Container(
-            padding: const EdgeInsets.all(5),
+            padding: .all(UIConstants.gapSize.md),
             decoration: BoxDecoration(
               color: color.withAlpha(25),
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: .circular(UIConstants.borderRadius),
             ),
-            child: Icon(icon, size: 12, color: color),
+            child: Icon(icon, size: UIConstants.uiSize.md, color: color),
           ),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: .start,
+            mainAxisSize: .min,
+            spacing: UIConstants.gapSize.xs,
             children: [
               Text(
                 "$value $unit",
                 style: TextStyle(
                   fontSize: FontConstants.fontSize.sm,
                   fontWeight: FontWeight.w700,
+                  fontFamily: FontConstants.fontFamily,
                   color: color,
-                  height: 1.2,
                 ),
                 maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                overflow: .ellipsis,
               ),
-              const SizedBox(height: 2),
               Text(
                 label,
-                style: const TextStyle(
-                  fontSize: 9,
+                style: TextStyle(
+                  fontSize: FontConstants.fontSize.xs,
+                  fontFamily: FontConstants.fontFamily,
                   color: ColorConstants.secondaryTextColor,
                 ),
                 maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                overflow: .ellipsis,
               ),
             ],
           ),

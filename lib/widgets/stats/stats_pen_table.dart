@@ -5,6 +5,8 @@ import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/models/api/task.dart';
 import 'package:pig_counter/widgets/stats/stats_section_title.dart';
 
+import '../../constants/font.dart';
+
 class StatsPenTable extends StatelessWidget {
   final Task taskData;
 
@@ -25,10 +27,10 @@ class StatsPenTable extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(UIConstants.borderRadius),
-            border: Border.all(color: Colors.grey.shade200),
+            borderRadius: .circular(UIConstants.borderRadius),
+            border: .all(color: Colors.grey.shade200),
           ),
-          clipBehavior: Clip.antiAlias,
+          clipBehavior: .antiAlias,
           child: Column(
             children: [
               _HeaderRow(),
@@ -48,39 +50,46 @@ class StatsPenTable extends StatelessWidget {
   }
 }
 
-// 公共 cell 构建函数
-Widget _cell(Widget child, {bool center = true}) => Expanded(
+Widget _cell(
+  Widget child, {
+  bool center = true,
+  int flex = 1,
+  FlexFit fit = .loose,
+}) => Flexible(
+  fit: fit,
+  flex: flex,
   child: Padding(
-    padding: EdgeInsets.symmetric(vertical: UIConstants.gapSize.md),
+    padding: .symmetric(vertical: UIConstants.gapSize.md),
     child: center ? Center(child: child) : child,
   ),
 );
 
-const _headerStyle = TextStyle(
-  fontSize: 11,
-  fontWeight: FontWeight.w700,
+final _headerStyle = TextStyle(
+  fontWeight: .w700,
+  fontSize: FontConstants.fontSize.xs,
+  fontFamily: FontConstants.fontFamily,
   color: ColorConstants.secondaryTextColor,
 );
 
-const _cellStyle = TextStyle(
-  fontSize: 11,
+final _cellStyle = TextStyle(
+  fontSize: FontConstants.fontSize.xs,
+  fontFamily: FontConstants.fontFamily,
   color: ColorConstants.defaultTextColor,
+  fontWeight: .w400,
 );
 
 class _HeaderRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: UIConstants.gapSize.lg),
+      padding: .symmetric(horizontal: UIConstants.gapSize.lg),
       color: ColorConstants.themeColor.withAlpha(15),
       child: Row(
         children: [
-          _cell(const Text("栋舍", style: _headerStyle), center: false),
-          _cell(const Text("栏位", style: _headerStyle), center: false),
-          _cell(const Text("AI 数", style: _headerStyle)),
-          _cell(const Text("人工数", style: _headerStyle)),
-          _cell(const Text("类型", style: _headerStyle)),
-          _cell(const Text("状态", style: _headerStyle)),
+          _cell(Text("栋舍", style: _headerStyle), flex: 2),
+          _cell(Text("栏位", style: _headerStyle), flex: 2),
+          _cell(Text("AI/人工", style: _headerStyle), flex: 1),
+          _cell(Text("状态", style: _headerStyle), flex: 1),
         ],
       ),
     );
@@ -98,82 +107,58 @@ class _DataRow extends StatelessWidget {
     required this.odd,
   });
 
+  String getCountText() {
+    final aiCount = pen.aiCount > 0 ? pen.aiCount.toString() : "—";
+    final manualCount = pen.manualCount > 0 ? pen.manualCount.toString() : "—";
+    if (aiCount == "—" && manualCount == "—") return "—";
+    return "$aiCount / $manualCount";
+  }
+
+  IconData getStatusIcon() {
+    if (!pen.status) return LucideIcons.circle_dashed;
+    if (pen.type == .image) {
+      return LucideIcons.image;
+    } else if (pen.type == .video) {
+      return LucideIcons.film;
+    } else {
+      return LucideIcons.circle_check;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    String typeLabel;
-    Color typeColor;
-    switch (pen.type) {
-      case UploadType.image:
-        typeLabel = "图片";
-        typeColor = const Color(0xFF2196F3);
-      case UploadType.video:
-        typeLabel = "视频";
-        typeColor = const Color(0xFF9C27B0);
-      default:
-        typeLabel = "—";
-        typeColor = Colors.grey;
-    }
-
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: UIConstants.gapSize.lg),
+      padding: .symmetric(horizontal: UIConstants.gapSize.lg),
       color: odd ? Colors.grey.shade50 : Colors.white,
       child: Row(
         children: [
           _cell(
-            Text(
-              building.name,
-              style: _cellStyle,
-              overflow: TextOverflow.ellipsis,
-            ),
-            center: false,
+            Text(building.name, style: _cellStyle, overflow: .ellipsis),
+            flex: 2,
           ),
           _cell(
-            Text(pen.name, style: _cellStyle, overflow: TextOverflow.ellipsis),
-            center: false,
+            Text(pen.name, style: _cellStyle, overflow: .ellipsis),
+            flex: 2,
           ),
           _cell(
             Text(
-              pen.aiCount > 0 ? pen.aiCount.toString() : "—",
+              getCountText(),
               style: _cellStyle.copyWith(
-                color: const Color(0xFF2196F3),
-                fontWeight: FontWeight.w600,
+                color: ColorConstants.themeColor,
+                fontWeight: .w700,
               ),
             ),
-          ),
-          _cell(
-            Text(
-              pen.manualCount > 0 ? pen.manualCount.toString() : "—",
-              style: _cellStyle.copyWith(
-                color: const Color(0xFFFF7043),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          _cell(
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: typeColor.withAlpha(25),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                typeLabel,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: typeColor,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
+            flex: 1,
           ),
           _cell(
             Icon(
-              pen.status ? LucideIcons.circle_check : LucideIcons.circle_dashed,
-              size: 14,
+              getStatusIcon(),
+              size: UIConstants.uiSize.md,
               color: pen.status
                   ? ColorConstants.successColor
                   : Colors.grey.shade400,
             ),
+            flex: 1,
           ),
         ],
       ),

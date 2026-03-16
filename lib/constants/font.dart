@@ -5,11 +5,11 @@ class FontConstants {
   static const String logoFontFamily = "logo_font";
   static const SizeEnum fontSize = SizeEnum(
     xs: 10.0,
-    sm: 14.0,
-    md: 16.0,
-    lg: 20.0,
-    xl: 24.0,
-    xxl: 32.0,
-    xxxl: 40.0,
+    sm: 11.0,
+    md: 14.0,
+    lg: 16.0,
+    xl: 18.0,
+    xxl: 20.0,
+    xxxl: 22.0,
   );
 }

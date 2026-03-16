@@ -42,7 +42,7 @@ class TaskIntroHeader extends StatelessWidget {
                 padding: .only(right: UIConstants.gapSize.sm),
                 child: Icon(
                   progressIcon,
-                  size: FontConstants.fontSize.sm,
+                  size: FontConstants.fontSize.md,
                   color: progressColor,
                 ),
               ),
@@ -52,7 +52,6 @@ class TaskIntroHeader extends StatelessWidget {
                   color: progressColor,
                   fontFamily: FontConstants.fontFamily,
                   fontSize: FontConstants.fontSize.md,
-                  height: 1.2,
                   fontWeight: .w500,
                   overflow: .ellipsis,
                 ),
@@ -64,8 +63,7 @@ class TaskIntroHeader extends StatelessWidget {
             style: TextStyle(
               color: progressColor,
               fontFamily: FontConstants.fontFamily,
-              fontSize: FontConstants.fontSize.sm,
-              height: 1.2,
+              fontSize: FontConstants.fontSize.md,
               fontWeight: .w500,
               overflow: .ellipsis,
             ),

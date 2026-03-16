@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pig_counter/constants/font.dart';
+import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/models/api/task.dart';
 
 class TaskIntroInfo extends StatelessWidget {
@@ -8,7 +10,27 @@ class TaskIntroInfo extends StatelessWidget {
   const TaskIntroInfo({super.key, required this.taskData});
 
   Widget buildInfoItem(String title, String content) {
-    return Row(children: [Text(title), SizedBox(width: 8), Text(content)]);
+    return Row(
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontFamily: FontConstants.fontFamily,
+            fontWeight: FontWeight.w500,
+            fontSize: FontConstants.fontSize.sm + 1,
+          ),
+        ),
+        SizedBox(width: UIConstants.gapSize.md),
+        Text(
+          content,
+          style: TextStyle(
+            fontFamily: FontConstants.fontFamily,
+            fontWeight: FontWeight.w500,
+            fontSize: FontConstants.fontSize.sm + 1,
+          ),
+        ),
+      ],
+    );
   }
 
   @override

@@ -78,13 +78,6 @@ class _DashboardViewState extends State<DashboardView> {
               Navigator.pushNamed(context, RoutesPathConstants.history);
             },
           ),
-          DashboardMenuSectionItem(
-            icon: LucideIcons.chart_bar,
-            iconColor: const Color(0xFFFF7043),
-            label: "数据导出",
-            subtitle: "将识别结果导出为表格",
-            onTap: () {},
-          ),
         ],
       ),
       SizedBox(height: UIConstants.gapSize.xl),
@@ -99,13 +92,6 @@ class _DashboardViewState extends State<DashboardView> {
               onTap: () {
                 Navigator.pushNamed(context, RoutesPathConstants.settings);
               },
-            ),
-            DashboardMenuSectionItem(
-              icon: LucideIcons.info,
-              iconColor: Colors.grey.shade600,
-              label: "关于",
-              subtitle: "版本信息与帮助文档",
-              onTap: () {},
             ),
             if (_userController.isLoggedIn.value)
               DashboardMenuSectionItem(

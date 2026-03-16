@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:intl/intl.dart';
 import 'package:pig_counter/constants/color.dart';
+import 'package:pig_counter/constants/font.dart';
 import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/models/api/task.dart';
 
@@ -16,17 +17,17 @@ class StatsTaskMeta extends StatelessWidget {
     final bool expired = taskData.outdate && !taskData.completed;
 
     return Container(
-      padding: EdgeInsets.all(UIConstants.gapSize.lg),
+      padding: .all(UIConstants.gapSize.lg),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(UIConstants.borderRadius),
-        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: .circular(UIConstants.borderRadius),
+        border: .all(color: Colors.grey.shade200),
       ),
       child: Row(
         children: [
           Icon(
             expired ? LucideIcons.circle_alert : LucideIcons.info,
-            size: 15,
+            size: UIConstants.uiSize.md,
             color: expired
                 ? ColorConstants.errorColor
                 : ColorConstants.themeColor,
@@ -75,15 +76,17 @@ class _MetaItem extends StatelessWidget {
         children: [
           TextSpan(
             text: "$label：",
-            style: const TextStyle(
-              fontSize: 12,
+            style: TextStyle(
+              fontSize: FontConstants.fontSize.sm,
+              fontFamily: FontConstants.fontFamily,
               color: ColorConstants.secondaryTextColor,
             ),
           ),
           TextSpan(
             text: value,
-            style: const TextStyle(
-              fontSize: 12,
+            style: TextStyle(
+              fontSize: FontConstants.fontSize.sm,
+              fontFamily: FontConstants.fontFamily,
               fontWeight: FontWeight.w600,
               color: ColorConstants.defaultTextColor,
             ),

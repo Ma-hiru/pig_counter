@@ -12,14 +12,15 @@ class StatsSectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      spacing: UIConstants.gapSize.sm,
       children: [
         Icon(icon, size: 15, color: ColorConstants.themeColor),
-        SizedBox(width: UIConstants.gapSize.md),
         Text(
           title,
           style: TextStyle(
-            fontSize: FontConstants.fontSize.md,
-            fontWeight: FontWeight.w700,
+            fontWeight: .w700,
+            fontSize: FontConstants.fontSize.sm,
+            fontFamily: FontConstants.fontFamily,
             color: ColorConstants.defaultTextColor,
           ),
         ),
