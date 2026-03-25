@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:pig_counter/utils/local.dart';
 import 'package:pig_counter/utils/persistence.dart';
 import 'package:pig_counter/utils/token.dart';
 
+import '../constants/routes.dart';
 import '../models/api/user.dart';
+import '../utils/modal.dart';
 
 class UserController extends GetxController {
   static const _userProfilePersistenceKey = "user_profile";
@@ -36,6 +39,22 @@ class UserController extends GetxController {
 
   void clearUserAndPwd({String? username, String? password}) {
     memoUserAndPwd(username: null, password: null);
+  }
+
+  void logout(BuildContext context) {
+    AppModal.show(
+      context,
+      .normal(
+        title: "退出登录",
+        description: "确定要退出当前账号吗？",
+        confirmText: "退出",
+        cancelText: "取消",
+        onConfirm: () {
+          updateUserProfile(.empty());
+          Navigator.pushNamed(context, RoutesPathConstants.login);
+        },
+      ),
+    );
   }
 
   String? getMemoUsername() {

@@ -22,22 +22,6 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView> {
   final UserController _userController = Get.find<UserController>();
 
-  void _logout() {
-    AppModal.show(
-      context,
-      .normal(
-        title: "退出登录",
-        description: "确定要退出当前账号吗？",
-        confirmText: "退出",
-        cancelText: "取消",
-        onConfirm: () {
-          _userController.updateUserProfile(.empty());
-          Navigator.pushNamed(context, RoutesPathConstants.login);
-        },
-      ),
-    );
-  }
-
   Widget buildProfileCard() {
     return DashboardProfileCard(
       profile: _userController.profile.value,
@@ -99,7 +83,7 @@ class _DashboardViewState extends State<DashboardView> {
                 iconColor: ColorConstants.errorColor,
                 label: "退出登录",
                 flat: true,
-                onTap: _logout,
+                onTap: () => _userController.logout(context),
               ),
           ],
         ),

@@ -113,7 +113,11 @@ class TaskCache {
   static Future<int> totalSize() async {
     int total = 0;
     for (final file in (await _dir()).listSync()) {
-      if (file is File) total += file.lengthSync();
+      try {
+        if (file is File) total += file.lengthSync();
+      } catch (err) {
+        if (kDebugMode) print("Failed to get file size for ${file.path}: $err");
+      }
     }
     return total;
   }
@@ -127,6 +131,30 @@ class TaskCache {
       }
     }
     return count;
+  }
+
+  static Future<int> limitSize(int limit) async {
+    final currentSize = await totalSize();
+    final removeSize = currentSize - limit;
+    if (removeSize <= 0) return 0;
+
+    final entries = (await _dir()).listSync();
+    final sortFiles = entries.whereType<File>().toList()
+      ..sort((a, b) {
+        final aAccessed = a.statSync().accessed;
+        final bAccessed = b.statSync().accessed;
+        return aAccessed.compareTo(bAccessed);
+      });
+
+    var removedSize = 0;
+    for (final file in sortFiles) {
+      final fileSize = file.lengthSync();
+      file.deleteSync();
+      removedSize += fileSize;
+      if (removedSize >= removeSize) break;
+    }
+
+    return removedSize;
   }
 }
 

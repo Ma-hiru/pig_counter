@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pig_counter/pages/settings/settings_actions.dart';
+import 'package:pig_counter/stores/user.dart';
 import 'package:pig_counter/widgets/settings/settings_menu_section_item.dart';
 
 import '../../constants/color.dart';
 import '../../constants/ui.dart';
+import '../../models/settings/cache.dart';
 import '../../stores/settings.dart';
 import '../../widgets/header/navigator_app_bar.dart';
 import '../../widgets/settings/settings_menu_section.dart';
@@ -17,16 +18,74 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final SettingsController _settingsController = Get.find<SettingsController>();
-  late final SettingsActions _settingsActions;
+  final _settingsController = Get.find<SettingsController>();
+  final _userController = Get.find<UserController>();
+  double _totalCacheSizeMB = 0;
+
+  void updateCacheSize() {
+    CacheSettings.currentCacheSizeBytes.then((size) {
+      setState(() {
+        _totalCacheSizeMB = size / 1024 / 1024;
+      });
+    });
+  }
 
   @override
-  initState(){
+  void initState() {
     super.initState();
-    _settingsActions = SettingsActions(
-      context: context,
-      settingsController: _settingsController,
-    );
+    updateCacheSize();
+  }
+
+  List<Widget> buildItems() {
+    return [
+      SettingsMenuSection(
+        title: "上传设置",
+        items: [
+          SettingsMenuSectionItem(
+            label: "图片上传质量",
+            subtitle: "图片压缩质量百分比",
+            value: "${_settingsController.upload.value.uploadPenImageQuality}%",
+            onTap: () => _settingsController.editImageQuality(context),
+          ),
+        ],
+      ),
+      SizedBox(height: UIConstants.gapSize.xl),
+      SettingsMenuSection(
+        title: "缓存设置",
+        items: [
+          SettingsMenuSectionItem(
+            label: "最大缓存大小",
+            subtitle: "当前大小　${_totalCacheSizeMB.toStringAsFixed(2)}MB",
+            value:
+                "${(_settingsController.cache.value.maxCacheSizeBytes / 1024 / 1024).toStringAsFixed(0)} MB",
+            onTap: () {
+              _settingsController.editMaxCacheSize(context);
+            },
+          ),
+          SettingsMenuSectionItem(
+            label: "清除缓存",
+            subtitle: "清除所有本地缓存数据",
+            flat: true,
+            onTap: () {
+              CacheSettings.removeCache(context, updateCacheSize);
+            },
+          ),
+        ],
+      ),
+      SizedBox(height: UIConstants.gapSize.xxxl),
+      if (_userController.isLoggedIn.value)
+        SettingsMenuSection(
+          title: "登录设置",
+          items: [
+            SettingsMenuSectionItem(
+              label: "退出登录",
+              subtitle: "退出当前账号，清除所有登录信息",
+              flat: true,
+              onTap: () => _userController.logout(context),
+            ),
+          ],
+        ),
+    ];
   }
 
   @override
@@ -43,50 +102,7 @@ class _SettingsPageState extends State<SettingsPage> {
             vertical: UIConstants.contentPaddingFromSides,
           ),
           child: Obx(
-            () => Column(
-              crossAxisAlignment: .start,
-              children: [
-                SettingsMenuSection(
-                  title: "上传设置",
-                  items: [
-                    SettingsMenuSectionItem(
-                      label: "图片上传质量",
-                      subtitle: "图片压缩质量百分比",
-                      value:
-                          "${_settingsController.upload.value.uploadPenImageQuality}%",
-                      onTap: _settingsActions.editImageQuality,
-                    ),
-                    SettingsMenuSectionItem(
-                      label: "视频上传分辨率",
-                      subtitle: "视频上传时的分辨率",
-                      value:
-                          "${_settingsController.upload.value.uploadPenVideoQuality}p",
-                      onTap: _settingsActions.editVideoQuality,
-                    ),
-                  ],
-                ),
-                SizedBox(height: UIConstants.gapSize.xl),
-                SettingsMenuSection(
-                  title: "缓存设置",
-                  items: [
-                    SettingsMenuSectionItem(
-                      label: "最大缓存大小",
-                      subtitle: "本地缓存占用上限",
-                      value:
-                          "${_settingsController.cache.value.maxCacheSizeMB} MB",
-                      onTap: _settingsActions.editMaxCacheSize,
-                    ),
-                    SettingsMenuSectionItem(
-                      label: "清除缓存",
-                      subtitle: "清除所有本地缓存数据",
-                      flat: true,
-                      onTap: _settingsActions.clearCache,
-                    ),
-                  ],
-                ),
-                SizedBox(height: UIConstants.gapSize.xxxl),
-              ],
-            ),
+            () => Column(crossAxisAlignment: .start, children: buildItems()),
           ),
         ),
       ),
