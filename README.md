@@ -1,34 +1,45 @@
-# pig_counter
+## 项目状态
 
-A new Flutter project.
+**开发中**
 
-## Getting Started
+当前功能与界面仍在持续迭代，下面截图用于展示现阶段主要页面。
 
-This project is a starting point for a Flutter application.
+## 简要介绍
 
-A few resources to get you started if this is your first Flutter project:
+- 提供账号登录与基础设置能力。
+- 支持任务列表浏览、栋舍/栏位进度查看。
+- 支持任务统计与栏位明细查看。
+- 支持栏位图片/视频上传与结果确认。
+- 支持用户资料查看（账号由管理员统一下发）。
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 界面展示
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 登录
 
-## Android 构建初始化（Node 版）
+![登录页](docs/images/login.png)
 
-脚本路径：`scripts/init-android-build.js`
+### 我的与账号
 
-模块类型：`ESM`（通过 `scripts/package.json` 的 `type: module` 启用）
+| 我的页面                               | 用户资料                          |
+| -------------------------------------- | --------------------------------- |
+| ![我的页面](docs/images/dashboard.png) | ![用户资料](docs/images/info.png) |
 
-使用方式：
+### 设置
 
-- 先修改 `scripts/init-android-build.js` 顶部的 `CONFIG`（如 `useProxy`、`proxyHost`、`proxyPort`、`skipBuild`）
-- 再运行：`node scripts/init-android-build.js`
+| 设置页                              | 设置输入弹窗                                    |
+| ----------------------------------- | ----------------------------------------------- |
+| ![设置页](docs/images/settings.png) | ![设置输入弹窗](docs/images/settings_input.png) |
 
-功能说明：
+### 任务
 
-- 设置 Gradle Wrapper 镜像
-- 统一处理项目级/用户级 Gradle 代理，避免冲突
-- 修补 `~/.gradle/init.gradle` 的 Flutter 兼容段
-- 执行 `flutter pub get`，并按需执行 `flutter build apk --release`
+![任务列表](docs/images/task.png)
+
+### 统计
+
+| 统计总览                                | 统计明细                           |
+| --------------------------------------- | ---------------------------------- |
+| ![统计总览](docs/images/stats_form.png) | ![统计明细](docs/images/stats.png) |
+
+### 上传
+
+![上传与结果](docs/images/upload.png)

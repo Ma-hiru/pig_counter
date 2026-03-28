@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/font.dart';
@@ -134,7 +136,6 @@ class AppModal {
   }
 
   static void show(BuildContext context, ModalData data) {
-    final controller = TextEditingController(text: data.initialValue);
     final formKey = GlobalKey<FormState>();
 
     showModalBottomSheet(
@@ -144,46 +145,130 @@ class AppModal {
       shape: RoundedRectangleBorder(
         borderRadius: .vertical(top: .circular(UIConstants.borderRadius)),
       ),
-      builder: (ctx) => Padding(
-        padding: .only(
-          left: UIConstants.contentPaddingFromSides,
-          right: UIConstants.contentPaddingFromSides,
-          top: UIConstants.gapSize.md,
-          bottom:
-              MediaQuery.of(ctx).viewInsets.bottom +
-              MediaQuery.of(ctx).padding.bottom +
-              UIConstants.gapSize.md,
-        ),
+      builder: (ctx) => _ModalSheet(data: data, formKey: formKey),
+    );
+  }
+}
+
+class _ModalSheet extends StatefulWidget {
+  final ModalData data;
+  final GlobalKey<FormState> formKey;
+
+  const _ModalSheet({required this.data, required this.formKey});
+
+  @override
+  State<_ModalSheet> createState() => _ModalSheetState();
+}
+
+class _ModalSheetState extends State<_ModalSheet> with WidgetsBindingObserver {
+  static const _keyboardSettleDuration = Duration(milliseconds: 120);
+  static const _sheetLiftDuration = Duration(milliseconds: 180);
+
+  Timer? _keyboardSettleTimer;
+  late final TextEditingController _controller;
+  double _stableKeyboardInset = 0;
+
+  bool get _hasInput => widget.data.hideInput != true;
+
+  double _readLogicalKeyboardInset() {
+    final views = WidgetsBinding.instance.platformDispatcher.views;
+    if (views.isEmpty) return 0;
+    final view = views.first;
+    if (view.devicePixelRatio <= 0) return 0;
+    final logical = view.viewInsets.bottom / view.devicePixelRatio;
+    if (!logical.isFinite || logical < 0) return 0;
+    return logical;
+  }
+
+  void _commitInset(double value) {
+    if (!mounted || _stableKeyboardInset == value) return;
+    setState(() {
+      _stableKeyboardInset = value;
+    });
+  }
+
+  void _scheduleInsetCommit() {
+    _keyboardSettleTimer?.cancel();
+    _keyboardSettleTimer = Timer(_keyboardSettleDuration, () {
+      if (!mounted) return;
+      _commitInset(_readLogicalKeyboardInset());
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.data.initialValue);
+    if (_hasInput) {
+      WidgetsBinding.instance.addObserver(this);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _commitInset(_readLogicalKeyboardInset());
+      });
+    }
+  }
+
+  @override
+  void didChangeMetrics() {
+    if (!_hasInput) return;
+    _scheduleInsetCommit();
+  }
+
+  @override
+  void dispose() {
+    _keyboardSettleTimer?.cancel();
+    if (_hasInput) {
+      WidgetsBinding.instance.removeObserver(this);
+    }
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final safeBottom = media.padding.bottom;
+    final maxInset = media.size.height * 0.85;
+    final effectiveInset = _stableKeyboardInset.clamp(0.0, maxInset);
+
+    return AnimatedPadding(
+      duration: _sheetLiftDuration,
+      curve: Curves.easeOutCubic,
+      padding: EdgeInsets.only(
+        left: UIConstants.contentPaddingFromSides,
+        right: UIConstants.contentPaddingFromSides,
+        top: UIConstants.gapSize.md,
+        bottom: effectiveInset + safeBottom + UIConstants.gapSize.md,
+      ),
+      child: SingleChildScrollView(
         child: Form(
-          key: formKey,
+          key: widget.formKey,
           child: Column(
             mainAxisSize: .min,
             crossAxisAlignment: .start,
             children: [
-              // 拖拽指示条
-              if (data.showIndicator == true) _buildIndicator(),
+              if (widget.data.showIndicator == true) AppModal._buildIndicator(),
               SizedBox(height: UIConstants.gapSize.xl),
-              // 标题
-              _buildTitle(data.title),
-              // 描述
-              if (data.description != null) ...[
+              AppModal._buildTitle(widget.data.title),
+              if (widget.data.description != null) ...[
                 SizedBox(height: UIConstants.gapSize.sm),
-                _buildDescription(data.description!),
+                AppModal._buildDescription(widget.data.description!),
               ],
-              // 输入框
-              if (data.hideInput != true) ...[
+              if (_hasInput) ...[
                 SizedBox(height: UIConstants.gapSize.xl),
-                _buildInput(data: data, controller: controller),
+                AppModal._buildInput(
+                  data: widget.data,
+                  controller: _controller,
+                ),
               ],
               SizedBox(height: UIConstants.gapSize.xl),
-              // 按钮
               Row(
                 spacing: UIConstants.gapSize.lg,
-                children: _buildButton(
-                  ctx: ctx,
-                  data: data,
-                  controller: controller,
-                  formKey: formKey,
+                children: AppModal._buildButton(
+                  ctx: context,
+                  data: widget.data,
+                  controller: _controller,
+                  formKey: widget.formKey,
                 ),
               ),
               SizedBox(height: UIConstants.gapSize.md),

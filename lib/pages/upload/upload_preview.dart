@@ -9,7 +9,6 @@ import '../../widgets/tips/tips.dart';
 class UploadPreview extends StatelessWidget {
   final Pen pen;
   final VoidCallback? onTap;
-  final GlobalKey<VideoPreviewState> videoKey = GlobalKey();
 
   String? get displayURL {
     if (pen.outputPath.isNotEmpty == true) {
@@ -44,7 +43,7 @@ class UploadPreview extends StatelessWidget {
     }
   }
 
-  UploadPreview({super.key, required this.pen, this.onTap});
+  const UploadPreview({super.key, required this.pen, this.onTap});
 
   Widget buildBlank() {
     return AspectRatio(
@@ -64,12 +63,13 @@ class UploadPreview extends StatelessWidget {
 
   Widget buildVideoPreview() {
     if (displayURL == null) return buildBlank();
-    return VideoPreview(key: videoKey, url: displayURL!, isLocal: isLocal);
+    return VideoPreview(url: displayURL!, isLocal: isLocal);
   }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      onTap: onTap,
       child: Container(
         clipBehavior: .antiAlias,
         padding: .all(UIConstants.gapSize.md),

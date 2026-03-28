@@ -6,7 +6,6 @@ import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/routes.dart';
 import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/stores/user.dart';
-import 'package:pig_counter/utils/modal.dart';
 import 'package:pig_counter/widgets/dashboard/dashboard_menu_section_item.dart';
 import 'package:pig_counter/widgets/dashboard/dashboard_profile_card.dart';
 
@@ -35,17 +34,13 @@ class _DashboardViewState extends State<DashboardView> {
         title: "账户",
         items: [
           DashboardMenuSectionItem(
-            icon: LucideIcons.user_round_pen,
+            icon: LucideIcons.user_round,
             iconColor: ColorConstants.themeColor,
-            label: "编辑资料",
-            subtitle: "修改姓名、组织等信息",
-            onTap: () {},
-          ),
-          DashboardMenuSectionItem(
-            icon: LucideIcons.lock_keyhole,
-            iconColor: const Color(0xFF7B5EA7),
-            label: "修改密码",
-            onTap: () {},
+            label: "查看用户资料",
+            subtitle: "账号由管理员下发，仅支持查看",
+            onTap: () {
+              Navigator.pushNamed(context, RoutesPathConstants.profile);
+            },
           ),
         ],
       ),
