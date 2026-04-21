@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:pig_counter/constants/http.dart';
 import 'package:pig_counter/models/api/response.dart';
 
-import 'token.dart';
+import '../stores/token.dart';
 
 class _Request {
   final _dio = Dio();
@@ -23,7 +23,7 @@ class _Request {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (request, handler) {
-          final token = tokenManager.getToken();
+          final token = TokenManager.getToken();
           if (token is String) request.headers["Authorization"] = token;
           handler.next(request);
         },
@@ -32,7 +32,7 @@ class _Request {
             handler.next(response);
           } else {
             if (response.statusCode == 401) {
-              tokenManager.removeToken();
+              TokenManager.removeToken();
               // TODO: 重新登录
             }
             handler.reject(

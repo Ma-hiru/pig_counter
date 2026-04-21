@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +7,10 @@ import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/err.dart';
 import 'package:pig_counter/models/routes/upload_route_param.dart';
 import 'package:pig_counter/pages/upload/upload_actions.dart';
-import 'package:pig_counter/pages/upload/upload_options.dart';
 import 'package:pig_counter/pages/upload/upload_preview.dart';
 import 'package:pig_counter/pages/upload/upload_result.dart';
 import 'package:pig_counter/utils/cache.dart';
+import 'package:pig_counter/utils/media_selector.dart';
 import 'package:pig_counter/utils/toast.dart';
 
 import '../../constants/ui.dart';
@@ -30,7 +28,7 @@ class UploadPage extends StatefulWidget {
 class _UploadPageState extends State<UploadPage> {
   final SettingsController settingsController = Get.find<SettingsController>();
   UploadRouteParam? latestData;
-  UploadOptions? uploadOptions;
+  MediaSelector? uploadOptions;
 
   UploadRouteParam getRouteParam() {
     return ModalRoute.of(context)?.settings.arguments as UploadRouteParam? ??
@@ -38,10 +36,11 @@ class _UploadPageState extends State<UploadPage> {
   }
 
   Future fetchLatestData() async {
-    if (kDebugMode || Platform.isAndroid) {
+    if (kDebugMode) {
       latestData = getRouteParam();
       final cache = await TaskCache.checkOne(
         taskID: latestData!.task.id,
+        buildingID: latestData!.building.id,
         penID: latestData!.pen.id,
       );
       if (cache != null) {
@@ -63,7 +62,11 @@ class _UploadPageState extends State<UploadPage> {
         (b) => b.id == routeParam.building.id,
       );
       final pen = building.pens.firstWhere((p) => p.id == routeParam.pen.id);
-      final cache = await TaskCache.checkOne(taskID: task.id, penID: pen.id);
+      final cache = await TaskCache.checkOne(
+        taskID: task.id,
+        buildingID: building.id,
+        penID: pen.id,
+      );
       if (cache != null) {
         pen.localPath = cache.path;
         pen.localType = cache.type;
@@ -97,6 +100,7 @@ class _UploadPageState extends State<UploadPage> {
           UploadActions(
             pen: latestData!.pen,
             taskID: latestData!.task.id,
+            buildingID: latestData!.building.id,
             uploadOptions: uploadOptions!,
             onChange: (pen) {
               setState(() {
@@ -113,7 +117,7 @@ class _UploadPageState extends State<UploadPage> {
   @override
   void initState() {
     super.initState();
-    uploadOptions = UploadOptions(settingsController: settingsController);
+    uploadOptions = MediaSelector(settingsController: settingsController);
     Future.microtask(fetchLatestData);
   }
 

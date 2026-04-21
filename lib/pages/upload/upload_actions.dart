@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/models/api/task.dart';
-import 'package:pig_counter/pages/upload/upload_options.dart';
 import 'package:pig_counter/utils/cache.dart';
+import 'package:pig_counter/utils/media_selector.dart';
 import 'package:pig_counter/utils/modal.dart';
 import 'package:pig_counter/utils/toast.dart';
 import 'package:pig_counter/widgets/button/button.dart';
@@ -11,13 +11,15 @@ import 'package:pig_counter/widgets/button/button.dart';
 class UploadActions extends StatelessWidget {
   final Pen pen;
   final int taskID;
-  final UploadOptions uploadOptions;
+  final int buildingID;
+  final MediaSelector uploadOptions;
   final void Function(Pen) onChange;
 
   const UploadActions({
     super.key,
     required this.pen,
     required this.taskID,
+    required this.buildingID,
     required this.onChange,
     required this.uploadOptions,
   });
@@ -100,14 +102,19 @@ class UploadActions extends StatelessWidget {
     // todo use api
 
     // finally remove temp cache
-    TaskCache.remove(taskID: taskID, penID: pen.id).catchError((_) {});
+    TaskCache.remove(
+      taskID: taskID,
+      buildingID: buildingID,
+      penID: pen.id,
+    ).catchError((_) {});
   }
 
   void saveTemp() {
     TaskCache.save(
           taskID: taskID,
+          buildingID: buildingID,
           penID: pen.id,
-          path: pen.localPath,
+          uri: pen.localPath,
           type: pen.localType,
         )
         .then((_) {
@@ -134,7 +141,7 @@ class UploadActions extends StatelessWidget {
     }
     // 未上传但已选择
     if (pen.localPath.isNotEmpty == true) {
-      TaskCache.remove(taskID: taskID, penID: pen.id);
+      TaskCache.remove(taskID: taskID, buildingID: buildingID, penID: pen.id);
       onChange(pen.copyWith(localPath: "", localType: .none));
     }
   }

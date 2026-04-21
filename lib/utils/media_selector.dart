@@ -2,14 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pig_counter/stores/settings.dart';
 
-import '../../constants/err.dart';
-import '../../utils/toast.dart';
+import '../constants/err.dart';
+import 'toast.dart';
 
-class UploadOptions {
+class MediaSelector {
   final ImagePicker picker = ImagePicker();
   final SettingsController settingsController;
 
-  UploadOptions({required this.settingsController});
+  MediaSelector({required this.settingsController});
 
   Future<String?> selectImage() async {
     try {

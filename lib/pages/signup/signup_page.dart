@@ -48,7 +48,7 @@ class _SignupPageState extends State<SignupPage> {
     setState(() => isLoading = true);
 
     try {
-      final signupResult = await API.Auth.signup(
+      final signupResult = await API.User.signup(
         username: username,
         password: password,
         avatar: avatar,

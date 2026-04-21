@@ -6,13 +6,13 @@ import 'package:pig_counter/models/api/response.dart';
 import 'package:pig_counter/models/api/user.dart';
 import 'package:pig_counter/utils/fetch.dart';
 
-class AuthAPI {
+class UserAPI {
   Future<ResponseData<UserProfile>> login({
     required String username,
     required String password,
   }) {
     return fetch.post(
-      APIConstants.loginByAccount,
+      APIConstants.user.loginByAccount,
       UserProfile.fromJSON,
       data: {"username": username, "password": password},
     );
@@ -26,12 +26,12 @@ class AuthAPI {
     required File avatar,
   }) async {
     return fetch.post(
-      APIConstants.signupByAccount,
+      APIConstants.user.signupByAccount,
       null,
       data: FormData.fromMap({
+        "name": name,
         "username": username,
         "password": password,
-        "name": name,
         "company": company,
         "avatar": await MultipartFile.fromFile(
           avatar.path,
@@ -40,5 +40,13 @@ class AuthAPI {
       }),
       options: Options(contentType: "multipart/form-data"),
     );
+  }
+
+  Future<ResponseData<Null>> logout() {
+    return fetch.post(APIConstants.user.logout, null);
+  }
+
+  Future<ResponseData<UserProfile>> detail(int id) {
+    return fetch.get(APIConstants.user.loginByAccount, UserProfile.fromJSON);
   }
 }

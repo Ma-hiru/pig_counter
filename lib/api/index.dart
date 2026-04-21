@@ -1,7 +1,7 @@
-import 'auth.dart';
+import 'user.dart';
 import 'task.dart';
 
 class API {
-  static final Auth = AuthAPI();
+  static final User = UserAPI();
   static final Task = TaskAPI();
 }

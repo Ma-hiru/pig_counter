@@ -149,7 +149,7 @@ class _LoginFormState extends State<LoginForm> {
     }
 
     try {
-      final userProfile = await API.Auth.login(
+      final userProfile = await API.User.login(
         username: username,
         password: password,
       );

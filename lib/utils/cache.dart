@@ -1,54 +1,69 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart' as provider;
 import 'package:pig_counter/models/api/task.dart';
 
 class TaskCache {
+  static Directory? _directory;
+
   static Future<Directory> _dir() async {
-    final base = await getTemporaryDirectory();
-    final dir = Directory(join(base.path, "media_cache"));
-    if (!dir.existsSync()) await dir.create(recursive: true);
-    return dir;
+    if (_directory != null) return _directory!;
+
+    final base = await provider.getTemporaryDirectory();
+    final dir = Directory(path.join(base.path, "media_cache"));
+    final exists = await dir.exists();
+    if (!exists) await dir.create(recursive: true);
+
+    return _directory = dir;
   }
 
   static String _buildFilename({
     required int taskID,
+    required int buildingID,
     required int penID,
     required UploadType type,
   }) {
-    return "${taskID}_${penID}_${type.name}";
+    return "${taskID}_${buildingID}_${penID}_${type.name}";
   }
 
   static TaskCacheFilenameParseResult? _parseFilename(String filePath) {
-    final filename = basename(filePath);
+    final filename = path.basename(filePath);
     final parts = filename.split("_");
-    if (parts.length != 3) return null;
+    if (parts.length != 4) return null;
 
     final taskID = int.tryParse(parts[0]);
-    final penID = int.tryParse(parts[1]);
-    final type = parts[2];
+    final buildingID = int.tryParse(parts[1]);
+    final penID = int.tryParse(parts[2]);
+    final type = parts[3];
 
-    if (taskID == null || penID == null) return null;
+    if (taskID == null || buildingID == null || penID == null) return null;
 
     return TaskCacheFilenameParseResult(
       taskID: taskID,
+      buildingID: buildingID,
       penID: penID,
       type: UploadTypeExt.fromName(type),
     );
   }
 
-  static Future<List<String>> _buildCheckPaths({
+  static Future<List<String>> _buildFastCheckList({
     required int taskID,
+    required int buildingID,
     required int penID,
   }) async {
     final dir = (await _dir()).path;
     return UploadType.values
         .map(
-          (type) => join(
+          (type) => path.join(
             dir,
-            _buildFilename(taskID: taskID, penID: penID, type: type),
+            _buildFilename(
+              taskID: taskID,
+              buildingID: buildingID,
+              penID: penID,
+              type: type,
+            ),
           ),
         )
         .toList();
@@ -56,15 +71,21 @@ class TaskCache {
 
   static Future<String> save({
     required int taskID,
+    required int buildingID,
     required int penID,
-    required String path,
+    required String uri,
     required UploadType type,
   }) async {
-    final newPath = join(
+    final newPath = path.join(
       (await _dir()).path,
-      _buildFilename(taskID: taskID, penID: penID, type: type),
+      _buildFilename(
+        taskID: taskID,
+        buildingID: buildingID,
+        penID: penID,
+        type: type,
+      ),
     );
-    await File(path).copy(newPath);
+    await File(uri).copy(newPath);
     if (kDebugMode) {
       print("Saved cache file: $newPath");
     }
@@ -73,13 +94,18 @@ class TaskCache {
 
   static Future<List<TaskCacheCheckResult>> check({
     required int taskID,
+    required int buildingID,
     required int penID,
   }) async {
-    final checkList = await _buildCheckPaths(taskID: taskID, penID: penID);
+    final checkList = await _buildFastCheckList(
+      taskID: taskID,
+      buildingID: buildingID,
+      penID: penID,
+    );
     final List<TaskCacheCheckResult> result = [];
 
     for (final file in checkList.map(File.new)) {
-      if (file.existsSync()) {
+      if (await file.exists()) {
         result.add(
           TaskCacheCheckResult(file.path, _parseFilename(file.path)!.type),
         );
@@ -91,21 +117,34 @@ class TaskCache {
 
   static Future<TaskCacheCheckResult?> checkOne({
     required int taskID,
+    required int buildingID,
     required int penID,
   }) async {
-    final checkResultList = await check(taskID: taskID, penID: penID);
+    final checkResultList = await check(
+      taskID: taskID,
+      buildingID: buildingID,
+      penID: penID,
+    );
     if (checkResultList.isEmpty) return null;
     return checkResultList.first;
   }
 
-  static Future remove({required int taskID, required int penID}) async {
-    final checkList = await _buildCheckPaths(taskID: taskID, penID: penID);
+  static Future remove({
+    required int taskID,
+    required int buildingID,
+    required int penID,
+  }) async {
+    final checkList = await _buildFastCheckList(
+      taskID: taskID,
+      buildingID: buildingID,
+      penID: penID,
+    );
     for (final file in checkList.map(File.new)) {
-      if (file.existsSync()) {
+      if (await file.exists()) {
         if (kDebugMode) {
           print("Removing cache file: ${file.path}");
         }
-        file.deleteSync();
+        await file.delete();
       }
     }
   }
@@ -168,10 +207,12 @@ class TaskCacheCheckResult {
 class TaskCacheFilenameParseResult {
   final int taskID;
   final int penID;
+  final int buildingID;
   final UploadType type;
 
   const TaskCacheFilenameParseResult({
     required this.taskID,
+    required this.buildingID,
     required this.penID,
     required this.type,
   });

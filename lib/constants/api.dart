@@ -1,4 +1,12 @@
+class UserAPI {
+  final String loginByAccount = "/user/login";
+  final String signupByAccount = "/user/signup";
+  final String logout = "/user/logout";
+  final String detail = "/user";
+
+  const UserAPI();
+}
+
 class APIConstants {
-  static const String loginByAccount = "/api/user/login";
-  static const String signupByAccount = "/api/user/signup";
+  static const UserAPI user = UserAPI();
 }
