@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../constants/color.dart';
+import '../../../constants/err.dart';
 import '../../../constants/font.dart';
 import '../../../constants/ui.dart';
 import '../../../models/api/task.dart';
+import '../../../stores/user.dart';
+import '../../../utils/task_fetcher.dart';
+import '../../../utils/toast.dart';
 import '../../../widgets/header/home_sliver_bar.dart';
 import '../../../widgets/stats/stats_building_progress.dart';
 import '../../../widgets/stats/stats_overview.dart';
@@ -21,32 +26,71 @@ class StatsView extends StatefulWidget {
 
 class _StatsViewState extends State<StatsView> {
   final indicatorKey = GlobalKey<RefreshIndicatorState>();
+  final UserController _userController = Get.find<UserController>();
+
+  Worker? _loginWorker;
   List<Task> _taskList = [];
   int _selectedIndex = 0;
 
   Task? get _selected => _taskList.isEmpty ? null : _taskList[_selectedIndex];
 
   Future<void> _refresh() async {
-    setState(() {
-      _taskList = List.generate(10, Task.test);
-      _selectedIndex = 0;
-    });
+    if (!_userController.isLoggedIn.value ||
+        _userController.profile.value.id <= 0) {
+      if (!mounted) return;
+      return setState(() {
+        _taskList = [];
+        _selectedIndex = 0;
+      });
+    }
+
+    try {
+      final tasks = await fetchEmployeeTasksWithDetails(
+        _userController.profile.value.id,
+      );
+      if (!mounted) return;
+      setState(() {
+        _taskList = tasks;
+        _selectedIndex = 0;
+      });
+    } on StateError catch (err) {
+      Toast.showToast(.error(err.message));
+    } catch (err) {
+      if (err == ErrConstants.responseFormatError) {
+        Toast.showToast(.error(ErrMsgConstants.responseFormatError));
+      } else {
+        Toast.showToast(.error(ErrMsgConstants.networkError));
+      }
+    }
   }
 
   @override
   void initState() {
     super.initState();
+    _loginWorker = ever<bool>(_userController.isLoggedIn, (_) {
+      _refresh();
+    });
     _refresh();
   }
 
+  @override
+  void dispose() {
+    _loginWorker?.dispose();
+    super.dispose();
+  }
+
   Widget _buildBlank() {
+    final isLoggedIn = _userController.isLoggedIn.value;
     return Column(
       children: [
         HomeSliverBar(title: "任务统计", subTitle: "", disableSliver: true),
         Expanded(
           child: GestureDetector(
             onTap: () => indicatorKey.currentState?.show(),
-            child: AppTips.icon(text: "暂无数据，点击刷新", type: .refresh),
+            child: AppTips.icon(
+              text: isLoggedIn ? "暂无数据，点击刷新" : "请先登录后查看统计",
+              type: .refresh,
+            ),
           ),
         ),
       ],
@@ -102,25 +146,27 @@ class _StatsViewState extends State<StatsView> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      key: indicatorKey,
-      onRefresh: _refresh,
-      color: ColorConstants.themeColor,
-      backgroundColor: Colors.white,
-      child: _taskList.isNotEmpty
-          ? CustomScrollView(
-              slivers: [
-                HomeSliverBar(
-                  title: "任务统计",
-                  subTitle: "共 ${_taskList.length} 个任务",
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(height: UIConstants.gapSize.lg),
-                ),
-                ..._buildSlivers(),
-              ],
-            )
-          : _buildBlank(),
+    return Obx(
+      () => RefreshIndicator(
+        key: indicatorKey,
+        onRefresh: _refresh,
+        color: ColorConstants.themeColor,
+        backgroundColor: Colors.white,
+        child: _taskList.isNotEmpty
+            ? CustomScrollView(
+                slivers: [
+                  HomeSliverBar(
+                    title: "任务统计",
+                    subTitle: "共 ${_taskList.length} 个任务",
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: UIConstants.gapSize.lg),
+                  ),
+                  ..._buildSlivers(),
+                ],
+              )
+            : _buildBlank(),
+      ),
     );
   }
 }

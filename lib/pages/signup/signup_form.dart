@@ -128,7 +128,7 @@ class SignupFormState extends State<SignupForm> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "选择公司",
+                "选择组织",
                 style: TextStyle(
                   fontSize: FontConstants.fontSize.md,
                   fontFamily: FontConstants.fontFamily,
@@ -142,8 +142,8 @@ class SignupFormState extends State<SignupForm> {
                 height: MediaQuery.of(context).size.height * 0.35,
                 child: ListView(
                   children: List.generate(100, (index) {
-                    return companyItem("公司$index", () {
-                      companyController.text = "公司$index";
+                    return companyItem("组织$index", () {
+                      companyController.text = "组织$index";
                       Navigator.pop(context);
                     });
                   }),
@@ -160,7 +160,7 @@ class SignupFormState extends State<SignupForm> {
 
   Widget buildCompanyField() {
     return OutlineFormInput(
-      hitText: "选择公司",
+      hitText: "选择组织",
       validator: Validator.username,
       prefixIcon: Icon(
         LucideIcons.building_2,

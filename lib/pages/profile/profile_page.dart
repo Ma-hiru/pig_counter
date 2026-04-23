@@ -129,7 +129,8 @@ class _ProfilePageState extends State<ProfilePage> {
         SettingsMenuSection(
           title: "账号信息",
           items: [
-            buildReadonlyItem(label: "账号ID", value: profile.id),
+            buildReadonlyItem(label: "账号ID", value: profile.id.toString()),
+            buildReadonlyItem(label: "组织ID", value: profile.orgId.toString()),
             buildReadonlyItem(label: "角色", value: displayRole),
             buildReadonlyItem(
               label: "登录状态",

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:pig_counter/constants/api.dart';
 import 'package:pig_counter/constants/http.dart';
 import 'package:pig_counter/models/api/response.dart';
 
@@ -61,6 +62,16 @@ class _Request {
     return dio;
   }
 
+  String _normalizePath(String path) {
+    if (path.startsWith("http://") || path.startsWith("https://")) {
+      return path;
+    }
+    if (path.startsWith(APIBaseConstants.prefix)) {
+      return path;
+    }
+    return "${APIBaseConstants.prefix}$path";
+  }
+
   Future<ResponseData<T>> _handleResponse<T>(
     Future<Response<dynamic>> task,
     T Function(dynamic data) handleData,
@@ -84,7 +95,11 @@ class _Request {
   }) {
     handleData ??= (v) => v;
     return _handleResponse<T>(
-      _dio.get(path, queryParameters: queryParameters, options: options),
+      _dio.get(
+        _normalizePath(path),
+        queryParameters: queryParameters,
+        options: options,
+      ),
       handleData,
     );
   }
@@ -97,7 +112,39 @@ class _Request {
   }) {
     handleData ??= (v) => v;
     return _handleResponse<T>(
-      _dio.post(path, data: data, options: options),
+      _dio.post(_normalizePath(path), data: data, options: options),
+      handleData,
+    );
+  }
+
+  Future<ResponseData<T>> put<T>(
+    String path,
+    T Function(dynamic data)? handleData, {
+    Object? data,
+    Options? options,
+  }) {
+    handleData ??= (v) => v;
+    return _handleResponse<T>(
+      _dio.put(_normalizePath(path), data: data, options: options),
+      handleData,
+    );
+  }
+
+  Future<ResponseData<T>> delete<T>(
+    String path,
+    T Function(dynamic data)? handleData, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) {
+    handleData ??= (v) => v;
+    return _handleResponse<T>(
+      _dio.delete(
+        _normalizePath(path),
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      ),
       handleData,
     );
   }

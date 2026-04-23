@@ -10,20 +10,27 @@ class UploadResult extends StatelessWidget {
 
   const UploadResult({super.key, required this.pen});
 
-  int get totalCount => pen.aiCount + pen.manualCount;
+  int get totalCount => pen.displayCount;
+
+  bool get canConfirm =>
+      pen.outputPath.isNotEmpty ||
+      (pen.uploadPath.isNotEmpty &&
+          pen.processingStatus.toUpperCase() == "SUCCESS");
 
   String get statusText {
     if (pen.status) return "已确认";
-    if (pen.outputPath.isNotEmpty) return "待确认";
-    if (pen.uploadPath.isNotEmpty) return "处理中";
+    if (canConfirm) return "待确认";
+    if (pen.isProcessing) return "处理中";
+    if (pen.isFailed) return "处理失败";
     if (pen.localPath.isNotEmpty) return "待上传";
     return "未上传";
   }
 
   Color get statusColor {
     if (pen.status) return ColorConstants.successColor;
-    if (pen.outputPath.isNotEmpty) return ColorConstants.themeColor;
-    if (pen.uploadPath.isNotEmpty) return const Color(0xFF2196F3);
+    if (canConfirm) return ColorConstants.themeColor;
+    if (pen.isProcessing) return const Color(0xFF2196F3);
+    if (pen.isFailed) return ColorConstants.errorColor;
     if (pen.localPath.isNotEmpty) return const Color(0xFFFF9800);
     return ColorConstants.secondaryTextColor;
   }

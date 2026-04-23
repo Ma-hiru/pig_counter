@@ -12,41 +12,51 @@ class UserAPI {
     required String password,
   }) {
     return fetch.post(
-      APIConstants.user.loginByAccount,
+      APIConstants.user.login,
       UserProfile.fromJSON,
       data: {"username": username, "password": password},
     );
   }
 
-  Future<ResponseData<dynamic>> signup({
+  Future<ResponseData<Null>> register({
     required String username,
     required String password,
     required String name,
-    required String company,
-    required File avatar,
+    required String organization,
+    String sex = "未知",
+    String phone = "",
+    bool admin = false,
+    File? picture,
   }) async {
+    final payload = <String, dynamic>{
+      "name": name,
+      "username": username,
+      "password": password,
+      "sex": sex,
+      "phone": phone,
+      "organization": organization,
+      "admin": admin,
+    };
+    if (picture != null) {
+      payload["picture"] = await MultipartFile.fromFile(
+        picture.path,
+        filename: picture.path.split('/').last,
+      );
+    }
+
     return fetch.post(
-      APIConstants.user.signupByAccount,
+      APIConstants.user.register,
       null,
-      data: FormData.fromMap({
-        "name": name,
-        "username": username,
-        "password": password,
-        "company": company,
-        "avatar": await MultipartFile.fromFile(
-          avatar.path,
-          filename: avatar.path.split('/').last,
-        ),
-      }),
+      data: FormData.fromMap(payload),
       options: Options(contentType: "multipart/form-data"),
     );
   }
 
   Future<ResponseData<Null>> logout() {
-    return fetch.post(APIConstants.user.logout, null);
+    return fetch.post(APIConstants.user.logout, null, data: {});
   }
 
   Future<ResponseData<UserProfile>> detail(int id) {
-    return fetch.get(APIConstants.user.loginByAccount, UserProfile.fromJSON);
+    return fetch.get(APIConstants.user.detail(id), UserProfile.fromJSON);
   }
 }

@@ -53,9 +53,9 @@ class StatsOverview extends StatelessWidget {
             _StatCard(
               icon: LucideIcons.gauge,
               label: "任务进度",
-              value: taskData.progress.toString(),
+              value: (taskData.progress * 100).toStringAsFixed(0),
               unit: "%",
-              color: taskData.progress >= 100
+              color: taskData.progress >= 1
                   ? ColorConstants.successColor
                   : ColorConstants.themeColor,
             ),

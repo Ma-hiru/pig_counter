@@ -20,12 +20,19 @@ class PenItem extends StatelessWidget {
 
   Color get _statusColor => pen.status
       ? ColorConstants.successColor
-      : (pen.uploadPath.isNotEmpty && pen.outputPath.isEmpty)
+      : pen.isFailed
+      ? ColorConstants.errorColor
+      : pen.isProcessing
+      ? ColorConstants.themeColor
+      : (pen.uploadPath.isNotEmpty || pen.outputPath.isNotEmpty)
       ? ColorConstants.themeColor
       : Colors.grey.shade400;
 
-  IconData get _statusIcon =>
-      pen.status ? LucideIcons.circle_check : LucideIcons.circle_dashed;
+  IconData get _statusIcon {
+    if (pen.status) return LucideIcons.circle_check;
+    if (pen.isFailed) return LucideIcons.circle_alert;
+    return LucideIcons.circle_dashed;
+  }
 
   IconData get _typeIcon {
     switch (pen.type) {
@@ -77,9 +84,12 @@ class PenItem extends StatelessWidget {
                   ),
                   child: Text(
                     pen.status
-                        ? "${pen.manualCount} 头"
-                        : (pen.uploadPath.isNotEmpty && pen.outputPath.isEmpty)
+                        ? "${pen.displayCount} 头"
+                        : pen.isProcessing
                         ? "处理中"
+                        : (pen.uploadPath.isNotEmpty ||
+                              pen.outputPath.isNotEmpty)
+                        ? "待确认"
                         : "未完成",
                     style: TextStyle(
                       color: _statusColor,

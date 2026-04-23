@@ -1,22 +1,43 @@
+import 'package:pig_counter/constants/api.dart';
 import 'package:pig_counter/models/api/task.dart';
 import 'package:pig_counter/utils/fetch.dart';
 
 import '../models/api/response.dart';
 
 class TaskAPI {
-  Future<ResponseData<Pen>> pen(int id) async {
-    return .success(.empty());
+  List<Task> _parseTaskPage(dynamic data) {
+    if (data is! Map<String, dynamic>) return [];
+    return ((data["list"] ?? []) as List<dynamic>).map(Task.fromJSON).toList();
   }
 
-  Future<ResponseData<Building>> building(int id) async {
-    return .success(.empty());
+  Future<ResponseData<List<Task>>> byEmployee(int employeeId) {
+    return fetch.get(APIConstants.task.byEmployee(employeeId), _parseTaskPage);
   }
 
-  Future<ResponseData<Task>> detail(int taskID) async {
-    return fetch.get("/task/detail/$taskID", Task.fromJSON);
+  Future<ResponseData<List<Task>>> page({
+    required int pageNum,
+    required int pageSize,
+  }) {
+    return fetch.get(
+      APIConstants.task.page,
+      _parseTaskPage,
+      queryParameters: {"pageNum": pageNum, "pageSize": pageSize},
+    );
   }
 
-  Future<ResponseData<Null>> success(int taskID) {
-    return fetch.post("/task/complete/$taskID", null);
+  Future<ResponseData<Task>> detail(int taskId) {
+    return fetch.get(APIConstants.task.detail(taskId), Task.fromJSON);
+  }
+
+  Future<ResponseData<Null>> receive(int taskId) {
+    return fetch.post(APIConstants.task.receive(taskId), null, data: {});
+  }
+
+  Future<ResponseData<Null>> complete(int taskId) {
+    return fetch.post(APIConstants.task.complete(taskId), null, data: {});
+  }
+
+  Future<ResponseData<Null>> success(int taskId) {
+    return complete(taskId);
   }
 }

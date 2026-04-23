@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:pig_counter/api/index.dart';
 import 'package:pig_counter/stores/token.dart';
 import 'package:pig_counter/utils/local.dart';
 import 'package:pig_counter/utils/persistence.dart';
@@ -12,19 +13,13 @@ class UserController extends GetxController {
   static const _userProfilePersistenceKey = "user_profile";
   static const _memoPwdKey = "memo_pwd";
   static const _memoUserKey = "memo_user";
-  static late UserProfile? _loadedInstance;
+  static UserProfile? _loadedInstance;
 
   UserProfile get persistenceLoadedProfile {
-    if (UserController._loadedInstance != null) {
-      return UserController._loadedInstance!;
-    }
-
-    final loaded = Persistence.Load(
+    return UserController._loadedInstance ??= Persistence.Load(
       UserProfile.empty(),
       _userProfilePersistenceKey,
     );
-
-    return (UserController._loadedInstance = loaded);
   }
 
   late final isLoggedIn = persistenceLoadedProfile.token.isNotEmpty.obs;
@@ -60,6 +55,7 @@ class UserController extends GetxController {
         confirmText: "退出",
         cancelText: "取消",
         onConfirm: () {
+          API.User.logout();
           updateUserProfile(.empty());
           Navigator.pushNamed(context, RoutesPathConstants.login);
         },

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pig_counter/api/index.dart';
 import 'package:pig_counter/constants/routes.dart';
 import 'package:pig_counter/constants/ui.dart';
 import 'package:pig_counter/models/api/task.dart';
 import 'package:pig_counter/models/routes/upload_route_param.dart';
+import 'package:pig_counter/utils/toast.dart';
 import 'package:pig_counter/widgets/task/task_intro_detail.dart';
 import 'package:pig_counter/widgets/task/task_intro_header.dart';
 import 'package:pig_counter/widgets/task/task_intro_info.dart';
@@ -24,14 +26,64 @@ class TaskIntro extends StatefulWidget {
 }
 
 class _TaskIntroState extends State<TaskIntro> {
-  void onTapDetailPen(Building building, Pen pen) {
+  Future<void> onTapDetailPen(Building building, Pen pen) async {
+    Task latestTask = widget.taskData;
+
+    if (latestTask.taskStatusValue.isPending) {
+      try {
+        final receiveResult = await API.Task.receive(latestTask.id);
+        if (!receiveResult.ok) {
+          Toast.showToast(
+            .error(
+              receiveResult.message.isNotEmpty
+                  ? receiveResult.message
+                  : "接收任务失败",
+            ),
+          );
+          return;
+        }
+
+        final detailResult = await API.Task.detail(latestTask.id);
+        if (detailResult.ok) {
+          latestTask = detailResult.data;
+        }
+        Toast.showToast(.success("任务已接收"));
+      } catch (_) {
+        Toast.showToast(.error("接收任务失败，请稍后重试"));
+        return;
+      }
+    }
+
+    Building targetBuilding = building;
+    for (final item in latestTask.buildings) {
+      if (item.id == building.id) {
+        targetBuilding = item;
+        break;
+      }
+    }
+    if (targetBuilding.id <= 0 && latestTask.buildings.isNotEmpty) {
+      targetBuilding = latestTask.buildings.first;
+    }
+
+    Pen targetPen = pen;
+    for (final item in targetBuilding.pens) {
+      if (item.id == pen.id) {
+        targetPen = item;
+        break;
+      }
+    }
+    if (targetPen.id <= 0 && targetBuilding.pens.isNotEmpty) {
+      targetPen = targetBuilding.pens.first;
+    }
+
+    if (!mounted) return;
     Navigator.pushNamed(
       context,
       RoutesPathConstants.upload,
       arguments: UploadRouteParam(
-        task: widget.taskData,
-        building: building,
-        pen: pen,
+        task: latestTask,
+        building: targetBuilding,
+        pen: targetPen,
       ),
     );
   }

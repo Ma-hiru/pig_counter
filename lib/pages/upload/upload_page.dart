@@ -1,10 +1,10 @@
-import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:pig_counter/api/index.dart';
 import 'package:pig_counter/constants/color.dart';
 import 'package:pig_counter/constants/err.dart';
+import 'package:pig_counter/models/api/task.dart';
 import 'package:pig_counter/models/routes/upload_route_param.dart';
 import 'package:pig_counter/pages/upload/upload_actions.dart';
 import 'package:pig_counter/pages/upload/upload_preview.dart';
@@ -35,52 +35,107 @@ class _UploadPageState extends State<UploadPage> {
         UploadRouteParam.empty();
   }
 
-  Future fetchLatestData() async {
-    if (kDebugMode) {
-      latestData = getRouteParam();
-      final cache = await TaskCache.checkOne(
-        taskID: latestData!.task.id,
-        buildingID: latestData!.building.id,
-        penID: latestData!.pen.id,
+  Future<Pen> _hydratePenMedia(Pen pen) async {
+    if (pen.mediaId > 0 && pen.hasRemoteMedia) return pen;
+
+    final today = DateFormat("yyyy-MM-dd").format(DateTime.now());
+    try {
+      final libraryResponse = await API.Media.library(
+        penId: pen.id,
+        date: today,
       );
-      if (cache != null) {
-        latestData = latestData!.copyWith(
-          pen: latestData!.pen.copyWith(
-            localPath: cache.path,
-            localType: cache.type,
-          ),
-        );
-      }
-      return setState(() {});
+      if (!libraryResponse.ok || libraryResponse.data.isEmpty) return pen;
+
+      final media = libraryResponse.data.firstWhere(
+        (item) => item.penId == pen.id,
+        orElse: () => libraryResponse.data.first,
+      );
+      return pen.copyWith(
+        mediaId: media.mediaId,
+        aiCount: media.count,
+        manualCount: media.manualCount,
+        uploadPath: media.picturePath,
+        outputPath: media.outputPicturePath,
+        thumbnailPath: media.thumbnailPath,
+        processingStatus: media.processingStatus,
+        processingMessage: media.processingMessage,
+        status: media.status,
+        type: UploadTypeExt.fromRaw(media.mediaType),
+      );
+    } catch (_) {
+      return pen;
     }
+  }
+
+  Future fetchLatestData() async {
     try {
       final routeParam = getRouteParam();
-      final response = await API.Task.detail(routeParam.task.id);
+      if (routeParam.task.id <= 0) {
+        return setState(() {
+          latestData = routeParam;
+        });
+      }
 
-      final task = response.data;
-      final building = task.buildings.firstWhere(
-        (b) => b.id == routeParam.building.id,
-      );
-      final pen = building.pens.firstWhere((p) => p.id == routeParam.pen.id);
+      final response = await API.Task.detail(routeParam.task.id);
+      if (!response.ok) {
+        Toast.showToast(
+          .error(response.message.isNotEmpty ? response.message : "加载任务失败"),
+        );
+        return;
+      }
+
+      var task = response.data;
+      if (task.taskStatusValue.isPending) {
+        final receiveResponse = await API.Task.receive(task.id);
+        if (receiveResponse.ok) {
+          final refreshed = await API.Task.detail(task.id);
+          if (refreshed.ok) {
+            task = refreshed.data;
+          }
+        }
+      }
+
+      Building building = routeParam.building;
+      for (final item in task.buildings) {
+        if (item.id == routeParam.building.id) {
+          building = item;
+          break;
+        }
+      }
+      if (building.id <= 0 && task.buildings.isNotEmpty) {
+        building = task.buildings.first;
+      }
+
+      Pen pen = routeParam.pen;
+      for (final item in building.pens) {
+        if (item.id == routeParam.pen.id) {
+          pen = item;
+          break;
+        }
+      }
+      if (pen.id <= 0 && building.pens.isNotEmpty) {
+        pen = building.pens.first;
+      }
+
+      pen = await _hydratePenMedia(pen);
       final cache = await TaskCache.checkOne(
         taskID: task.id,
         buildingID: building.id,
         penID: pen.id,
       );
       if (cache != null) {
-        pen.localPath = cache.path;
-        pen.localType = cache.type;
+        pen = pen.copyWith(localPath: cache.path, localType: cache.type);
       }
+
+      if (!mounted) return;
       setState(() {
         latestData = UploadRouteParam(task: task, building: building, pen: pen);
       });
-    } on DioException {
-      Toast.showToast(.error(ErrMsgConstants.networkError));
     } catch (err) {
       if (err == ErrConstants.responseFormatError) {
         Toast.showToast(.error(ErrMsgConstants.responseFormatError));
       } else {
-        Toast.showToast(.error("数据错误"));
+        Toast.showToast(.error(ErrMsgConstants.networkError));
       }
     }
   }
