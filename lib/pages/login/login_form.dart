@@ -185,12 +185,6 @@ class _LoginFormState extends State<LoginForm> {
               onPressed: submit,
               disabled: isLoading,
             ),
-            SizedBox(height: UIConstants.gapSize.md),
-            AppButton.normal(
-              label: "注册",
-              onPressed: () =>
-                  Navigator.pushNamed(context, RoutesPathConstants.signup),
-            ),
           ],
         ),
       ),

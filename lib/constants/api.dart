@@ -6,6 +6,7 @@ class UserAPIConstants {
   const UserAPIConstants();
 
   String get login => "/user/login";
+  String get refresh => "/user/refresh";
   String get register => "/user/register";
   String get logout => "/user/logout";
 
@@ -33,12 +34,28 @@ class InventoryMediaAPIConstants {
   String get confirm => "/inventory/media/confirm";
   String get unlock => "/inventory/media/unlock";
   String get manualCount => "/inventory/media/manual-count";
+  String get summary => "/inventory/media/summary";
 
   String delete(int mediaId) => "/inventory/media/$mediaId";
+}
+
+class DeadPigAPIConstants {
+  const DeadPigAPIConstants();
+
+  String get create => "/inventory/dead-pig";
+  String get daily => "/inventory/dead-pig/daily";
+}
+
+class PenAPIConstants {
+  const PenAPIConstants();
+
+  String get overview => "/pen/overview";
 }
 
 class APIConstants {
   static const UserAPIConstants user = UserAPIConstants();
   static const TaskAPIConstants task = TaskAPIConstants();
   static const InventoryMediaAPIConstants media = InventoryMediaAPIConstants();
+  static const DeadPigAPIConstants deadPig = DeadPigAPIConstants();
+  static const PenAPIConstants pen = PenAPIConstants();
 }

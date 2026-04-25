@@ -4,6 +4,11 @@ import 'package:pig_counter/models/api/media.dart';
 import 'package:pig_counter/models/api/response.dart';
 import 'package:pig_counter/utils/fetch.dart';
 
+String _fileNameFromPath(String path) {
+  final parts = path.split(RegExp(r'[\\/]'));
+  return parts.isEmpty ? path : parts.last;
+}
+
 class MediaAPI {
   Future<ResponseData<InventoryMediaUploadResult>> uploadBound({
     required int taskId,
@@ -13,7 +18,7 @@ class MediaAPI {
   }) async {
     final files = await Future.wait(
       filePaths.map(
-        (path) => MultipartFile.fromFile(path, filename: path.split('/').last),
+        (path) => MultipartFile.fromFile(path, filename: _fileNameFromPath(path)),
       ),
     );
 
@@ -38,7 +43,7 @@ class MediaAPI {
   }) async {
     final files = await Future.wait(
       filePaths.map(
-        (path) => MultipartFile.fromFile(path, filename: path.split('/').last),
+        (path) => MultipartFile.fromFile(path, filename: _fileNameFromPath(path)),
       ),
     );
 
@@ -65,6 +70,29 @@ class MediaAPI {
           .map(InventoryMediaItem.fromJSON)
           .toList(),
       queryParameters: {"penId": penId, "date": date},
+    );
+  }
+
+  Future<ResponseData<List<InventoryMediaItem>>> unbound({
+    required int taskId,
+  }) {
+    return fetch.get(
+      APIConstants.media.unbound,
+      (data) => ((data ?? []) as List<dynamic>)
+          .map(InventoryMediaItem.fromJSON)
+          .toList(),
+      queryParameters: {"taskId": taskId},
+    );
+  }
+
+  Future<ResponseData<Null>> bind({
+    required int penId,
+    required List<int> mediaIds,
+  }) {
+    return fetch.put(
+      APIConstants.media.bind,
+      null,
+      data: {"penId": penId, "mediaIds": mediaIds},
     );
   }
 

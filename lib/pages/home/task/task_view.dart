@@ -99,7 +99,8 @@ class _TaskViewState extends State<TaskView> {
     }
     return SliverList.builder(
       itemCount: _taskList.length,
-      itemBuilder: (ctx, index) => TaskIntro(taskData: _taskList[index]),
+      itemBuilder: (ctx, index) =>
+          TaskIntro(taskData: _taskList[index], onTaskUpdated: refreshTaskData),
     );
   }
 

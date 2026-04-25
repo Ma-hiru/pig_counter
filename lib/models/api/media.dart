@@ -14,6 +14,9 @@ class InventoryMediaItem {
   final bool status;
   final String captureTime;
   final String time;
+  final String dayBucket;
+  final bool duplicate;
+  final String analysisJson;
 
   const InventoryMediaItem({
     required this.mediaId,
@@ -31,6 +34,9 @@ class InventoryMediaItem {
     required this.status,
     required this.captureTime,
     required this.time,
+    required this.dayBucket,
+    required this.duplicate,
+    required this.analysisJson,
   });
 
   static int _toInt(dynamic value) {
@@ -75,6 +81,9 @@ class InventoryMediaItem {
       status: _toBool(json["status"]),
       captureTime: _toStringSafe(json["captureTime"]),
       time: _toStringSafe(json["time"]),
+      dayBucket: _toStringSafe(json["dayBucket"]),
+      duplicate: _toBool(json["duplicate"]),
+      analysisJson: _toStringSafe(json["analysisJson"]),
     );
   }
 }

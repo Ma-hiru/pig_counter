@@ -19,7 +19,7 @@ class UploadResult extends StatelessWidget {
 
   String get statusText {
     if (pen.status) return "已确认";
-    if (canConfirm) return "待确认";
+    if (canConfirm) return "待管理员复核";
     if (pen.isProcessing) return "处理中";
     if (pen.isFailed) return "处理失败";
     if (pen.localPath.isNotEmpty) return "待上传";
@@ -136,6 +136,20 @@ class UploadResult extends StatelessWidget {
     );
   }
 
+  String get helperText {
+    if (pen.status) return "媒体已经通过管理端复核确认。";
+    if (canConfirm) return "AI 结果已生成，等待管理员在管理端复核确认。";
+    if (pen.isProcessing) return "媒体已上传，AI 正在处理中，稍后刷新即可看到最新结果。";
+    if (pen.isFailed) {
+      if (pen.processingMessage.isNotEmpty) {
+        return pen.processingMessage;
+      }
+      return "AI 处理失败，请重新上传或联系管理员排查。";
+    }
+    if (pen.localPath.isNotEmpty) return "已选择本地媒体，点击上传后开始处理。";
+    return "当前栏舍还没有上传媒体。";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -203,6 +217,16 @@ class UploadResult extends StatelessWidget {
           ),
           SizedBox(height: UIConstants.gapSize.lg),
           buildSummary(),
+          SizedBox(height: UIConstants.gapSize.md),
+          Text(
+            helperText,
+            style: TextStyle(
+              fontFamily: FontConstants.fontFamily,
+              fontSize: FontConstants.fontSize.xs,
+              color: ColorConstants.secondaryTextColor,
+              height: 1.5,
+            ),
+          ),
         ],
       ),
     );

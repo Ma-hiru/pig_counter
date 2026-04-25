@@ -5,10 +5,8 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:pig_counter/pages/signup/signup_avatar.dart';
 
 import '../../constants/color.dart';
-import '../../constants/font.dart';
 import '../../constants/ui.dart';
 import '../../utils/validator.dart';
-import '../../widgets/button/button.dart';
 import '../../widgets/form/outline_input.dart';
 
 class SignupForm extends StatefulWidget {
@@ -22,18 +20,34 @@ class SignupFormState extends State<SignupForm> {
   File? avatar;
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController companyController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController passwordAgainController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  Map<String, String> fieldErrors = const {};
 
   bool passwordObscure = true;
   bool passwordAgainObscure = true;
 
+  void setFieldErrors(Map<String, String> errors) {
+    setState(() => fieldErrors = errors);
+    formKey.currentState?.validate();
+  }
+
+  void clearFieldError(String field) {
+    if (!fieldErrors.containsKey(field)) return;
+    setState(() {
+      final next = Map<String, String>.from(fieldErrors);
+      next.remove(field);
+      fieldErrors = next;
+    });
+  }
+
   Widget buildUsernameField() {
     return OutlineFormInput(
       hitText: "请输入用户名",
-      validator: Validator.username,
+      validator: (value) =>
+          fieldErrors["username"] ?? Validator.username(value),
+      onChanged: (_) => clearFieldError("username"),
       prefixIcon: Icon(
         LucideIcons.user_round,
         color: ColorConstants.themeColor,
@@ -49,7 +63,9 @@ class SignupFormState extends State<SignupForm> {
   }) {
     return OutlineFormInput(
       hitText: "请输入密码",
-      validator: Validator.password,
+      validator: (value) =>
+          fieldErrors["password"] ?? Validator.password(value),
+      onChanged: (_) => clearFieldError("password"),
       prefixIcon: Icon(
         LucideIcons.lock,
         color: ColorConstants.themeColor,
@@ -84,91 +100,14 @@ class SignupFormState extends State<SignupForm> {
   Widget buildNameField() {
     return OutlineFormInput(
       hitText: "请输入姓名",
-      validator: Validator.username,
+      validator: (value) => fieldErrors["name"] ?? Validator.username(value),
+      onChanged: (_) => clearFieldError("name"),
       prefixIcon: Icon(
         LucideIcons.file_user,
         color: ColorConstants.themeColor,
         size: UIConstants.uiSize.md,
       ),
       controller: nameController,
-    );
-  }
-
-  Widget companyItem(String text, Function() onTap) {
-    return ListTile(
-      title: Text(
-        text,
-        style: TextStyle(
-          fontSize: FontConstants.fontSize.md,
-          fontFamily: FontConstants.fontFamily,
-          color: ColorConstants.defaultTextColor,
-        ),
-      ),
-      onTap: onTap,
-    );
-  }
-
-  void openCompanySelection() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(UIConstants.borderRadius),
-        ),
-      ),
-      builder: (context) {
-        return Container(
-          width: double.infinity,
-          padding: .symmetric(
-            horizontal: UIConstants.contentPaddingFromSides,
-            vertical: UIConstants.gapSize.md,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "选择组织",
-                style: TextStyle(
-                  fontSize: FontConstants.fontSize.md,
-                  fontFamily: FontConstants.fontFamily,
-                  fontWeight: .w700,
-                  color: ColorConstants.themeColor,
-                ),
-                textAlign: .center,
-              ),
-              SizedBox(height: UIConstants.gapSize.md),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.35,
-                child: ListView(
-                  children: List.generate(100, (index) {
-                    return companyItem("组织$index", () {
-                      companyController.text = "组织$index";
-                      Navigator.pop(context);
-                    });
-                  }),
-                ),
-              ),
-              SizedBox(height: UIConstants.gapSize.md),
-              AppButton.text(label: "关闭"),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget buildCompanyField() {
-    return OutlineFormInput(
-      hitText: "选择组织",
-      validator: Validator.username,
-      prefixIcon: Icon(
-        LucideIcons.building_2,
-        color: ColorConstants.themeColor,
-        size: UIConstants.uiSize.md,
-      ),
-      controller: companyController,
-      onFocus: openCompanySelection,
     );
   }
 
@@ -200,8 +139,6 @@ class SignupFormState extends State<SignupForm> {
           ),
           SizedBox(height: UIConstants.gapSize.xl),
           buildNameField(),
-          SizedBox(height: UIConstants.gapSize.xl),
-          buildCompanyField(),
         ],
       ),
     );

@@ -26,12 +26,16 @@ class UserController extends GetxController {
   late final profile = persistenceLoadedProfile.obs;
 
   void updateUserProfile(UserProfile newProfile) {
+    UserController._loadedInstance = newProfile;
     profile.value = newProfile;
-    if (newProfile.token.isNotEmpty) {
-      TokenManager.setToken(newProfile.token);
+    final accessToken = newProfile.accessToken.isNotEmpty
+        ? newProfile.accessToken
+        : newProfile.token;
+    if (accessToken.isNotEmpty) {
+      TokenManager.setTokensFromProfile(newProfile);
       isLoggedIn.value = true;
     } else {
-      TokenManager.removeToken();
+      TokenManager.removeTokens();
       isLoggedIn.value = false;
     }
     Persistence.Save(newProfile, _userProfilePersistenceKey);

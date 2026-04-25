@@ -6,6 +6,11 @@ import 'package:pig_counter/models/api/response.dart';
 import 'package:pig_counter/models/api/user.dart';
 import 'package:pig_counter/utils/fetch.dart';
 
+String _fileNameFromPath(String path) {
+  final parts = path.split(RegExp(r'[\\/]'));
+  return parts.isEmpty ? path : parts.last;
+}
+
 class UserAPI {
   Future<ResponseData<UserProfile>> login({
     required String username,
@@ -18,11 +23,20 @@ class UserAPI {
     );
   }
 
+  Future<ResponseData<UserAuthSession>> refresh({
+    required String refreshToken,
+  }) {
+    return fetch.post(
+      APIConstants.user.refresh,
+      UserAuthSession.fromJSON,
+      data: {"refreshToken": refreshToken},
+    );
+  }
+
   Future<ResponseData<Null>> register({
     required String username,
     required String password,
     required String name,
-    required String organization,
     String sex = "未知",
     String phone = "",
     bool admin = false,
@@ -34,13 +48,12 @@ class UserAPI {
       "password": password,
       "sex": sex,
       "phone": phone,
-      "organization": organization,
       "admin": admin,
     };
     if (picture != null) {
       payload["picture"] = await MultipartFile.fromFile(
         picture.path,
-        filename: picture.path.split('/').last,
+        filename: _fileNameFromPath(picture.path),
       );
     }
 

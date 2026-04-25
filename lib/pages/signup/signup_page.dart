@@ -30,13 +30,9 @@ class _SignupPageState extends State<SignupPage> {
     final username = signupFormKey.currentState?.usernameController.text.trim();
     final password = signupFormKey.currentState?.passwordController.text.trim();
     final avatar = signupFormKey.currentState?.avatar;
-    final company = signupFormKey.currentState?.companyController.text.trim();
     final name = signupFormKey.currentState?.nameController.text.trim();
 
-    if (username == null ||
-        password == null ||
-        company == null ||
-        name == null) {
+    if (username == null || password == null || name == null) {
       return;
     }
 
@@ -52,13 +48,16 @@ class _SignupPageState extends State<SignupPage> {
         username: username,
         password: password,
         picture: avatar,
-        organization: company,
         name: name,
         admin: false,
       );
 
       if (!signupResult.ok) {
-        Toast.showToast(.error(signupResult.message));
+        final fieldErrors = signupResult.fieldErrors;
+        if (fieldErrors.isNotEmpty) {
+          signupFormKey.currentState?.setFieldErrors(fieldErrors);
+        }
+        Toast.showToast(.error(signupResult.displayMessage));
         return;
       }
 

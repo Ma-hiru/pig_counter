@@ -56,6 +56,20 @@ class ResponseData<T extends dynamic> {
     );
   }
 
+  Map<String, String> get fieldErrors {
+    final raw = data;
+    if (raw is! Map) return const {};
+    final entries = raw.entries
+        .where((entry) => entry.key != null && entry.value != null)
+        .map((entry) => MapEntry(entry.key.toString(), entry.value.toString()));
+    return Map<String, String>.fromEntries(entries);
+  }
+
+  String get displayMessage {
+    final text = message.trim();
+    return text.isNotEmpty ? text : "操作失败";
+  }
+
   static ResponseData<T> fromJsonWithType<T>({
     required dynamic json,
     required T Function(dynamic data) handleData,

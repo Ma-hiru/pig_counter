@@ -2,11 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:pig_counter/constants/api.dart';
 import 'package:pig_counter/constants/http.dart';
 import 'package:pig_counter/models/api/response.dart';
+import 'package:pig_counter/models/api/user.dart';
+import 'package:pig_counter/utils/session_manager.dart';
 
 import '../stores/token.dart';
 
 class _Request {
   final _dio = Dio();
+  Future<bool>? _refreshing;
 
   _Request() {
     addInterceptors(setOptions(_dio));
@@ -24,38 +27,53 @@ class _Request {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (request, handler) {
+          final shouldSkipAuth = request.extra["skipAuth"] == true;
           final token = TokenManager.getToken();
-          if (token is String) request.headers["Authorization"] = token;
+          if (!shouldSkipAuth && token is String) {
+            request.headers["Authorization"] = token;
+          }
           handler.next(request);
         },
         onResponse: (response, handler) {
-          if (response.statusCode! >= 200 && response.statusCode! < 300) {
-            handler.next(response);
-          } else {
-            if (response.statusCode == 401) {
-              TokenManager.removeToken();
-              // TODO: 重新登录
-            }
-            handler.reject(
-              DioException(
-                requestOptions: response.requestOptions,
-                message: response.data is Map<String, dynamic>
-                    ? ResponseData.getMessageFromJson(response.data) ?? "请求失败"
-                    : "请求失败",
-              ),
-            );
-          }
+          handler.next(response);
         },
-        onError: (error, handler) {
-          handler.reject(
-            DioException(
-              requestOptions: error.requestOptions,
-              message: error.response?.data is Map<String, dynamic>
-                  ? ResponseData.getMessageFromJson(error.response!.data) ??
-                        "请求失败"
-                  : error.message,
-            ),
-          );
+        onError: (error, handler) async {
+          final requestOptions = error.requestOptions;
+          final response = error.response;
+          final responseData = response?.data;
+          final skipRefresh = requestOptions.extra["skipRefresh"] == true;
+          final alreadyRetried = requestOptions.extra["retried"] == true;
+          final unauthorized =
+              response?.statusCode == 401 ||
+              _isApiCodeUnauthorized(responseData);
+
+          if (unauthorized &&
+              !_shouldSkipRefresh(requestOptions) &&
+              !skipRefresh &&
+              !alreadyRetried) {
+            final refreshed = await _refreshAccessToken();
+            if (refreshed) {
+              requestOptions.extra["retried"] = true;
+              requestOptions.headers["Authorization"] = TokenManager.getToken();
+              try {
+                final retried = await _dio.fetch<dynamic>(requestOptions);
+                handler.resolve(retried);
+                return;
+              } catch (retryError) {
+                if (retryError is DioException) {
+                  handler.reject(_toMessageException(retryError));
+                  return;
+                }
+              }
+            } else {
+              await SessionManager.handleUnauthorized();
+            }
+          }
+
+          if (unauthorized && !_isLoginRequest(requestOptions)) {
+            await SessionManager.handleUnauthorized();
+          }
+          handler.reject(_toMessageException(error));
         },
       ),
     );
@@ -78,12 +96,114 @@ class _Request {
   ) async {
     try {
       final response = await task;
+      final result = ResponseData.fromJsonWithType<T>(
+        json: response.data,
+        handleData: handleData,
+      );
+      if (result.code == 401 &&
+          !_shouldSkipRefresh(response.requestOptions) &&
+          response.requestOptions.extra["retried"] != true) {
+        final refreshed = await _refreshAccessToken();
+        if (refreshed) {
+          final retried = await _retryRequest<T>(
+            response.requestOptions,
+            handleData,
+          );
+          if (retried != null) {
+            return retried;
+          }
+        }
+        await SessionManager.handleUnauthorized();
+      }
+      return result;
+    } catch (err) {
+      rethrow;
+    }
+  }
+
+  bool _isLoginRequest(RequestOptions requestOptions) {
+    return requestOptions.path.contains(APIConstants.user.login);
+  }
+
+  bool _isRefreshRequest(RequestOptions requestOptions) {
+    return requestOptions.path.contains(APIConstants.user.refresh);
+  }
+
+  bool _shouldSkipRefresh(RequestOptions requestOptions) {
+    return _isLoginRequest(requestOptions) || _isRefreshRequest(requestOptions);
+  }
+
+  bool _isApiCodeUnauthorized(dynamic data) {
+    return data is Map<String, dynamic> && data["code"] == 401;
+  }
+
+  DioException _toMessageException(DioException error) {
+    return DioException(
+      requestOptions: error.requestOptions,
+      response: error.response,
+      type: error.type,
+      message: error.response?.data is Map<String, dynamic>
+          ? ResponseData.getMessageFromJson(error.response!.data) ?? "请求失败"
+          : error.message,
+      error: error.error,
+    );
+  }
+
+  Future<bool> _refreshAccessToken() async {
+    if (_refreshing != null) {
+      return _refreshing!;
+    }
+
+    final refreshToken = TokenManager.getRefreshToken();
+    if (refreshToken == null || refreshToken.isEmpty) {
+      return false;
+    }
+
+    _refreshing = () async {
+      try {
+        final response = await _dio.post(
+          _normalizePath(APIConstants.user.refresh),
+          data: {"refreshToken": refreshToken},
+          options: Options(extra: {"skipAuth": true, "skipRefresh": true}),
+        );
+        final result = ResponseData.fromJsonWithType<UserAuthSession>(
+          json: response.data,
+          handleData: UserAuthSession.fromJSON,
+        );
+        if (!result.ok) {
+          return false;
+        }
+        await TokenManager.setTokens(
+          accessToken: result.data.accessToken,
+          refreshToken: result.data.refreshToken,
+          tokenType: result.data.tokenType,
+        );
+        await SessionManager.onTokensRefreshed?.call(result.data);
+        return true;
+      } catch (_) {
+        return false;
+      } finally {
+        _refreshing = null;
+      }
+    }();
+
+    return _refreshing!;
+  }
+
+  Future<ResponseData<T>?> _retryRequest<T>(
+    RequestOptions requestOptions,
+    T Function(dynamic data) handleData,
+  ) async {
+    requestOptions.extra["retried"] = true;
+    requestOptions.headers["Authorization"] = TokenManager.getToken();
+    try {
+      final response = await _dio.fetch<dynamic>(requestOptions);
       return ResponseData.fromJsonWithType<T>(
         json: response.data,
         handleData: handleData,
       );
-    } catch (err) {
-      rethrow;
+    } catch (_) {
+      return null;
     }
   }
 

@@ -10,8 +10,14 @@ import 'building_item.dart';
 class TaskIntroDetail extends StatefulWidget {
   final Task taskData;
   final void Function(Building building, Pen pen)? onTap;
+  final void Function(Building building, Pen pen)? onTapDeadPig;
 
-  const TaskIntroDetail({super.key, required this.taskData, this.onTap});
+  const TaskIntroDetail({
+    super.key,
+    required this.taskData,
+    this.onTap,
+    this.onTapDeadPig,
+  });
 
   @override
   State<StatefulWidget> createState() => _TaskIntroDetailState();
@@ -64,8 +70,11 @@ class _TaskIntroDetailState extends State<TaskIntroDetail> {
                   child: Column(
                     children: widget.taskData.buildings
                         .map(
-                          (b) =>
-                              BuildingItem(building: b, onPenTap: widget.onTap),
+                          (b) => BuildingItem(
+                            building: b,
+                            onPenTap: widget.onTap,
+                            onDeadPigTap: widget.onTapDeadPig,
+                          ),
                         )
                         .toList(),
                   ),

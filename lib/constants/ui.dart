@@ -33,24 +33,24 @@ class UIConstants {
     ),
   ];
   static const SizeEnum uiSize = SizeEnum(
-    xs: 5,
-    sm: 10,
-    md: 16,
-    lg: 22,
-    xl: 32,
-    xxl: 42,
-    xxxl: 52,
+    xs: 6,
+    sm: 11,
+    md: 17,
+    lg: 23,
+    xl: 34,
+    xxl: 44,
+    xxxl: 56,
   );
   static const SizeEnum gapSize = SizeEnum(
-    xs: 2,
-    sm: 4,
-    md: 8,
-    lg: 12,
-    xl: 16,
-    xxl: 24,
-    xxxl: 32,
+    xs: 3,
+    sm: 6,
+    md: 10,
+    lg: 14,
+    xl: 18,
+    xxl: 26,
+    xxxl: 36,
   );
-  static const double borderRadius = 8.0;
-  static const double toastDistanceFromTop = 50.0;
-  static const double contentPaddingFromSides = 20.0;
+  static const double borderRadius = 10.0;
+  static const double toastDistanceFromTop = 56.0;
+  static const double contentPaddingFromSides = 22.0;
 }

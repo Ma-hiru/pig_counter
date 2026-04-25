@@ -10,12 +10,14 @@ class PenItem extends StatelessWidget {
   final Pen pen;
   final bool isLast;
   final void Function(Pen pen)? onTap;
+  final void Function(Pen pen)? onDeadPigTap;
 
   const PenItem({
     super.key,
     required this.pen,
     required this.isLast,
     this.onTap,
+    this.onDeadPigTap,
   });
 
   Color get _statusColor => pen.status
@@ -89,13 +91,36 @@ class PenItem extends StatelessWidget {
                         ? "处理中"
                         : (pen.uploadPath.isNotEmpty ||
                               pen.outputPath.isNotEmpty)
-                        ? "待确认"
+                        ? "待复核"
                         : "未完成",
                     style: TextStyle(
                       color: _statusColor,
                       fontFamily: FontConstants.fontFamily,
                       fontSize: FontConstants.fontSize.xs,
                       fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                SizedBox(width: UIConstants.gapSize.lg),
+                GestureDetector(
+                  onTap: () => onDeadPigTap?.call(pen),
+                  child: Container(
+                    padding: .symmetric(
+                      horizontal: UIConstants.gapSize.md,
+                      vertical: UIConstants.gapSize.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: .circular(UIConstants.borderRadius),
+                      color: ColorConstants.errorColor.withAlpha(24),
+                    ),
+                    child: Text(
+                      "死猪",
+                      style: TextStyle(
+                        color: ColorConstants.errorColor,
+                        fontFamily: FontConstants.fontFamily,
+                        fontSize: FontConstants.fontSize.xs,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),

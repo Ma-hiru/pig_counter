@@ -7,6 +7,7 @@ import 'package:pig_counter/constants/err.dart';
 import 'package:pig_counter/models/api/task.dart';
 import 'package:pig_counter/models/routes/upload_route_param.dart';
 import 'package:pig_counter/pages/upload/upload_actions.dart';
+import 'package:pig_counter/pages/upload/upload_media_library.dart';
 import 'package:pig_counter/pages/upload/upload_preview.dart';
 import 'package:pig_counter/pages/upload/upload_result.dart';
 import 'package:pig_counter/utils/cache.dart';
@@ -29,6 +30,8 @@ class _UploadPageState extends State<UploadPage> {
   final SettingsController settingsController = Get.find<SettingsController>();
   UploadRouteParam? latestData;
   MediaSelector? uploadOptions;
+  int _contentRefreshVersion = 0;
+  bool _pageRefreshing = false;
 
   UploadRouteParam getRouteParam() {
     return ModalRoute.of(context)?.settings.arguments as UploadRouteParam? ??
@@ -68,6 +71,11 @@ class _UploadPageState extends State<UploadPage> {
   }
 
   Future fetchLatestData() async {
+    if (mounted) {
+      setState(() {
+        _pageRefreshing = true;
+      });
+    }
     try {
       final routeParam = getRouteParam();
       if (routeParam.task.id <= 0) {
@@ -130,6 +138,7 @@ class _UploadPageState extends State<UploadPage> {
       if (!mounted) return;
       setState(() {
         latestData = UploadRouteParam(task: task, building: building, pen: pen);
+        _contentRefreshVersion++;
       });
     } catch (err) {
       if (err == ErrConstants.responseFormatError) {
@@ -137,20 +146,66 @@ class _UploadPageState extends State<UploadPage> {
       } else {
         Toast.showToast(.error(ErrMsgConstants.networkError));
       }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _pageRefreshing = false;
+        });
+      }
     }
+  }
+
+  Widget buildRefreshNotice() {
+    if (!_pageRefreshing || latestData == null) {
+      return const SizedBox.shrink();
+    }
+    return Container(
+      width: .infinity,
+      padding: .all(UIConstants.gapSize.md),
+      margin: .only(bottom: UIConstants.gapSize.md),
+      decoration: BoxDecoration(
+        color: const Color(0x141E88E5),
+        borderRadius: .circular(UIConstants.borderRadius),
+        border: .all(color: const Color(0x401E88E5)),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: const Color(0xFF1E88E5),
+            ),
+          ),
+          SizedBox(width: UIConstants.gapSize.sm),
+          Expanded(
+            child: Text(
+              "正在同步栏舍最新上传结果...",
+              style: TextStyle(
+                color: const Color(0xFF1E88E5),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget buildContent() {
     if (latestData != null && uploadOptions != null) {
-      return Column(
+      return ListView(
         children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: UploadPreview(pen: latestData!.pen),
-            ),
-          ),
+          buildRefreshNotice(),
+          UploadPreview(pen: latestData!.pen),
           SizedBox(height: UIConstants.gapSize.md),
           UploadResult(pen: latestData!.pen),
+          SizedBox(height: UIConstants.gapSize.md),
+          UploadMediaLibrary(
+            penId: latestData!.pen.id,
+            refreshVersion: _contentRefreshVersion,
+          ),
           SizedBox(height: UIConstants.gapSize.md),
           UploadActions(
             pen: latestData!.pen,
@@ -160,8 +215,10 @@ class _UploadPageState extends State<UploadPage> {
             onChange: (pen) {
               setState(() {
                 latestData = latestData!.copyWith(pen: pen);
+                _contentRefreshVersion++;
               });
             },
+            onRefresh: fetchLatestData,
           ),
         ],
       );
